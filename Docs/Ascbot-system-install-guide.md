@@ -12,7 +12,15 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 
-# 2. Ascbot程序的下载和安装
+# 2. Atlas 200 DK 安装ROS系统
+
+​       将SD卡插入Atlas 200 DK，启动并按照华为教程将Atlas 200 DK接入internet。
+​       安装ROS系统，ROS的安装可以参照[ROS官方教程](wiki.ros.org/kinetic/Installation/Ubuntu)
+
+
+
+
+# 3. Ascbot程序的下载和安装
 ​       1）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot) 版本，解压缩到本地路径 ./ascbot
 
 ​       2）在PC端通过ssh远程登录到Atlas 200 DK 系统   用户名： root    密码：Mind@123
@@ -27,14 +35,14 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 
-# 3. 安装手机端控制应用
+# 4. 安装手机端控制应用
 ​        1）下载手机端控制应用ascbot-remotectrl.apk ，[下载地址](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-remotectrlv1.0.apk)
 
 ​        2）安装：ascbot-remotectrlv1.0.apk 到手机
 
 
 
-# 4. 系统SD卡备份和恢复
+# 5. 系统SD卡备份和恢复
 
 - 备份
 

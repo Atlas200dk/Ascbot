@@ -1,24 +1,27 @@
-#目录
+# 目录
 一 系统介绍
 二 Ascbot智能小车的控制
 三 流媒体
 四 如何循线行驶
 五 如何做防碰撞以及防跌落
 
-#一 系统介绍
-##1系统介绍
-   Ascbot机器人是一款以Atlas 200 DK开发的机器人，利用昇腾200强大的ai算力，完成一款智能寻道和防碰撞还有物体跟随的机器人。
+# 一 系统介绍
+## 1 系统介绍
+   Ascbot机器人是一款以Atlas 200 DK开发的机器人，利用昇腾200强大的ai算力，完成一款智能循道行驶和防碰撞还有物体跟随功能的机器人。
    现在Robot Operation  System开源机器人系统，是一款开源，非常火的机器人系统，ros系统想必大家都已经很熟悉了，由于其高度集成和封装了很多好用的应用，可以帮助我们更快更简洁的开发一款自己的机器人。ros节点之间的通信有话题和服务两种，通信的话题可以自己定义。
-##2 应用场景	
-根据应用场景划分，主要分为寻道行驶，防碰撞防跌落行驶和物体跟随，下面详细介绍三种应用场景。
-#二 Ascbot智能小车的控制
-##2.1 关键代码示例
-###2.1.1 首先导包
+## 2 应用场景	
+根据应用场景划分，主要分为循道行驶，防碰撞防跌落行驶和物体跟随，下面详细介绍三种应用场景。
+# 二 Ascbot智能小车的控制
+## 2.1 关键代码示例
+###   首先导如Robot包
 
         from jetbot import Robot
-创建对象
+
+###   创建对象
 
         robot = Robot()
+ 
+ ### 调用g包内函数进行控制
  
  然后可以这个对象调用成员方法，包括左转，右转，前进，后退，停止以及单独设置指定左右轮速度，范围是-1～1，负值代表反转，正值代表正转。
         
@@ -36,7 +39,7 @@ camera server及rtsp server流程框架图
 camera server实现了对视频流数据的捕获，同时传输给AI算法进行处理，最后通过rtsp server以h264格式实现在手机app上播放功能。
 
 ## 3.2 camera server 交叉编译环境搭建
-### 3.2.1前提条件
+### 3.2.1 前提条件
 安装gcc-aarch64-linux-gnu与g++-aarch64-linux-gnu（5.4.0)版本
 ### 3.2.2 配置交叉编译环境
 请参考华为文档[交叉编译环境配置](https://ascend.huawei.com/doc/Atlas200DK/1.3.0.0/zh/zh-cn_topic_0195275737.html) 
@@ -212,11 +215,11 @@ if (p_stream->s_control.frame_out != NULL) {
 Rtsp server然后将数据发送给播放器。
 
 
-#四 寻道行驶
+# 四 循道行驶
 
-1工作机制
-从系统框图分析，cameraservice主要完成了打开camera，调用算法sdk，视频yuv数据喂给算法，利用定时器打开算法开关，定时取出算法返回的结果，寻道打开线性回归还有ssid壁障的结果，线性回归返回车道线的虚线与视频底边的夹角，ssid返回安全与非安全，行驶根据角度，动态调整两个电机的速度，在行驶的过程中，根据安全与非安全，判断是否停止运动。
-2接口说明
+### 1 工作机制
+从系统框图分析，cameraservice主要完成了打开camera，调用算法sdk，视频yuv数据喂给算法，利用定时器打开算法开关，定时取出算法返回的结果，循道行驶打开线性回归还有ssid壁障的结果，线性回归返回车道线的虚线与视频底边的夹角，ssid返回安全与非安全，行驶根据角度，动态调整两个电机的速度，在行驶的过程中，根据安全与非安全，判断是否停止运动。
+### 2 接口说明
 首先打开算法线性回归和ssid的开关
 
         memset(shm_addr+1*4,1,1)            #out_roadfollowingSwitch
@@ -241,14 +244,15 @@ Rtsp server然后将数据发送给播放器。
             angleData = angle_x_y[0] #bytearray(string_at(shm_addr+4,4))    
             self.execute(angleData)
  由于python实现的motor，cameraservice的实现是由C++实现的，所以python调用C++的实现，请自行查阅，这里不再详述。motor_angle_RunStatus数组的首个元素是安全与非安全，非安全，两个电机的速度为0；安全，把角度当作形参传递给execute。
-3 实现策略
+ # 3 实现策略
      
         speed_gain_slider = 0.4                #设定速度值   
         steering_gain_slider = 0.4             #转向增益
         speed_slider = 0.2                     #初始速度值
         steering_dgain_slider = 0.4            #转向增益的斜率
         steering_bias_slider = 0.01            #转向增益
-根据以上设定的初始值，，根据公式
+
+   根据以上设定的初始值，，根据公式
 
 
         speed_slider = self.speed_gain_slider
@@ -259,7 +263,8 @@ Rtsp server然后将数据发送给播放器。
         self.robot.left_motor.value = max(min(self.speed_slider+ steering_slider, 1.0), 0.000)
         self.robot.right_motor.value = max(min(self.speed_slider - steering_slider, 1.0), 0.000)
 可动态调整两个motor的速度值
-#五 防碰撞防跌落行驶
+
+# 五 防碰撞防跌落行驶
 ## 5.1工作机制
  从系统框图得知，cameraservice打开camera，获取的视频yuv原始数据，喂给算法sdk，通过算法开关，打开目标检测算法和边沿检测算法，算法返回是否到边沿，根据是否到边沿，进行分开处理，首先判断边沿，然后在非边沿的情况下，利用目标检测算法判断是否有非安全障碍物，检测到在有效的距离里内是否是非安全，安全不处理，继续前进；非安全，左转或者右转弯。
 ## 5.2 接口说明
@@ -291,7 +296,7 @@ Rtsp server然后将数据发送给播放器。
         else :
                 self.robot.set_motors(0.4, -0.4)
 collisionStatus[0]数组判别是否在有效的距离内有障碍物，根据motor_angle_RunStatus[0]的两种状态(-90左转，90右转)判别是否到了边沿。
-##5.4 日志模块
+## 5.4 日志模块
 此模块订阅robot_log话题，通信的消息是Hrobotlog，此消息是自定义类型的消息，数据结构为
 float64 time        //log的时间戳
 string tag             //log的标识
@@ -301,12 +306,12 @@ int8 level              //log级别
 string description//描述
 log的日志级别分为5个等级，包含是CRASH(0)，ERROR(1)，WARN(2)，INFO(3)，DEBUG(4)，TRACE(5)，默认值是INFO，要想修改此值，可通过1.3.3 ap交互模块在初始化的时候，指定log的日志的名字和日志级别；日志本地文件大于50M，从文件开始覆盖写入。
 
-##5.5 注意事项和调试说明
+## 5.5 注意事项和调试说明
 1 在开发板已经上电的情况下，道题尽量不要接触板子上的元器件，以免烧坏开发板；
 2在插oled板子的时候，注意管教顺序，在上电之前，用万用表测量一下对应管脚的通断；
 3 在开发应用的过程中，在工作空间中，创建功能包时，务必先source一下对应的setup.bash，目的是功能包添加到环境变量中；
-#六 远程控制开发接口
-##6.1 场景切换
+# 六 远程控制开发接口
+## 6.1 场景切换
 
 名称 | 数据格式 |描述
 -|-|
@@ -315,7 +320,7 @@ URL|192.168.3.9|ascbot的智能小车的ip
 请求方式 | socket| tcp通信
 请求参数 | ch_mode ，mode| ch_mode:ch_mode，mode:0//防碰撞和防跌落；mode:1//循道行驶;mode:2//物体跟随；mode:3//远程遥控
 
-##6.2 远程遥控
+## 6.2 远程遥控
 名称 | 数据格式 |描述
 -|-|
 URL|192.168.3.9|ascbot的智能小车的ip

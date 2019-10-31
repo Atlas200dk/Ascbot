@@ -3,9 +3,10 @@
 ##开始
 按照以下步骤，我们就可以组装一辆Ascbot智能小车，并构建一个完整的AI项目
 
-1. 先从[华为商城](https://www.vmall.com)购买Ascbot智能小车
+1. 先从[淘宝](https://item.taobao.com/item.htm?id=605273577157)购买Ascbot智能小车
+<img src="./Docs/Ascbotimg/buylink-QRcode.png" style="zoom: 33%;" />
 2. 依照[Ascbot智能小车组装指南](./Docs/Ascbot-assembly-guide-cn.md)组装小车
-3. 依照[Ascbot智能小车系统制作指南](./Docs/Ascbot-system-install-guide.md)创建系统SDK卡
+3. 依照[Ascbot智能小车系统制作指南](./Docs/Ascbot-system-install-guide.md)创建系统SD卡
 4. 依照[Ascbot智能小车开机运行指南](./Docs/Ascbot-system-startup.md)启动小车
 5. 依照[Ascbot智能小车开发环境搭建指南](./Docs/Ascbot-Development-environment-guide.md)搭建开发环境
 6. 依照以下文档开发AI算法
