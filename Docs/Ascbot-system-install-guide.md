@@ -21,7 +21,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 # 3. Ascbot程序的下载和安装
-​       1）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot) 版本，解压缩到本地路径 ./ascbot
+​       1）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/AscbotAppRelease.zip) 版本，解压缩到本地路径 ./ascbot
 
 ​       2）在PC端通过ssh远程登录到Atlas 200 DK 系统   用户名： root    密码：Mind@123
 
