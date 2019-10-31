@@ -15,7 +15,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 # 2. Atlas 200 DK 安装ROS系统
 
 ​       将SD卡插入Atlas 200 DK，启动并按照华为教程将Atlas 200 DK接入internet。
-​       安装ROS系统，ROS的安装可以参照[ROS官方教程](wiki.ros.org/kinetic/Installation/Ubuntu)
+​       安装ROS系统，ROS的安装可以参照[ROS官方教程](http://wiki.ros.org/kinetic/Installation/Ubuntu)
 
 
 
