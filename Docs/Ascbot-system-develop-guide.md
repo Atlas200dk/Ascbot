@@ -1,4 +1,4 @@
-﻿#目录
+#目录
 一 系统介绍
 二 Ascbot智能小车的控制
 三 流媒体
@@ -7,7 +7,7 @@
 
 #一 系统介绍
 ##1系统介绍
-   Ascbot机器人是一款以Atlas200 DK开发的机器人，利用昇腾200强大的ai算力，完成一款智能寻道和防碰撞还有物体跟随的机器人。
+   Ascbot机器人是一款以Atlas 200 DK开发的机器人，利用昇腾200强大的ai算力，完成一款智能寻道和防碰撞还有物体跟随的机器人。
    现在Robot Operation  System开源机器人系统，是一款开源，非常火的机器人系统，ros系统想必大家都已经很熟悉了，由于其高度集成和封装了很多好用的应用，可以帮助我们更快更简洁的开发一款自己的机器人。ros节点之间的通信有话题和服务两种，通信的话题可以自己定义。
 ##2 应用场景	
 根据应用场景划分，主要分为寻道行驶，防碰撞防跌落行驶和物体跟随，下面详细介绍三种应用场景。
@@ -42,7 +42,7 @@ camera server实现了对视频流数据的捕获，同时传输给AI算法进�
 请参考华为文档[交叉编译环境配置](https://ascend.huawei.com/doc/Atlas200DK/1.3.0.0/zh/zh-cn_topic_0195275737.html) 
 
 ## 3.3 camera server 代码下载
-代码下载链接[camera server及rtsp server代码下载](https://github.com/Ascend/ascbot) 下载camera_server_release.tar.gz及rtsp_server_release.tar.gz
+代码下载链接[camera server及rtsp server代码下载](https://gitee.com/Atlas200DK/Ascbot) 下载camera_server_release.tar.gz及rtsp_server_release.tar.gz
 
 ## 3.4 camera server编译
 在PC端解压下载的camera_server_release.tar.gz生成文件夹camera_server。

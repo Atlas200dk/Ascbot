@@ -30,7 +30,7 @@
 
 1. 启动小车，从远程ssh登陆小车系统
 
-2. 下载在小车上拍摄视频的程序 ascendcamera（[下载地址](https://gitee.com/sun_li_guo/ascbot/raw/master/Release/AscendCameraV1.zip)
+2. 下载在小车上拍摄视频的程序 ascendcamera（[下载地址](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/AscendCameraV1.zip)
 
 3. 准备车道线采集环境插入车道图片
 
@@ -75,7 +75,7 @@ ffmpeg -i video.h264 -vf fps=2 -q 0 ../video_name_frame%04d.jpg
 
 ## 2.1 部署数据标注工具 ATool
 
-下载 ATools [下载地址](https://gitee.com/sun_li_guo/ascbot/raw/master/Release/ATool.tar.gz)，编译并安装：
+下载 ATools [下载地址](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ATool.tar.gz)，编译并安装：
 
 ```
 cd ATool
