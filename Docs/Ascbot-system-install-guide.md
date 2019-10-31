@@ -52,7 +52,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 - 恢复
 
-  dd of=./backup/AscbotOS-YYYYMMDD.img of=/dev/sdb
+  dd if=./backup/AscbotOS-YYYYMMDD.img of=/dev/sdb
 
   注：假定SD卡挂载节点是sdb，需要根据实际挂载节点修改
 
