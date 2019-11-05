@@ -35,7 +35,7 @@
 # 三 流媒体
 ## 3.1  视频流框架及原理
 camera server及rtsp server流程框架图
-![camera server 框架图](.\AscbotImg\Ascbot-system-development-guide-01.png)
+![camera server 框架图](./AscbotImg/Ascbot-system-development-guide-01.png)
 camera server实现了对视频流数据的捕获，同时传输给AI算法进行处理，最后通过rtsp server以h264格式实现在手机app上播放功能。
 
 ## 3.2 camera server 交叉编译环境搭建
