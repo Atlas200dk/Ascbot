@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch>
+       <node name = "phone_talker_node" pkg="phone_talker" type="phone_talker_node"/>
+       <node name = "motor_control" pkg="motor" type="motorSubcriber.py"/>
+       <node name = "oled" pkg="oled" type="oled_node.py"/>
+       <node name = "robotlog" pkg="roslog" type="robotlog.py"/>
+</launch>

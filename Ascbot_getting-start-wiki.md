@@ -5,7 +5,7 @@
 
 1. 先从[淘宝](https://item.taobao.com/item.htm?id=605273577157)购买Ascbot智能小车
 
-![AscbotQRcode](./Docs/AscbotImg//buylink-QRcode.png)
+![AscbotQRcode](./Docs/AscbotImg/buylink-QRcode.png)
 
 2. 依照[Ascbot智能小车组装指南](./Docs/Ascbot-assembly-guide-cn.md)组装小车
 3. 依照[Ascbot智能小车系统制作指南](./Docs/Ascbot-system-install-guide.md)创建系统SD卡
