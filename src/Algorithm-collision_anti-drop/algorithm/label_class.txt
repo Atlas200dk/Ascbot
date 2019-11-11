@@ -1,0 +1,4 @@
+danger0
+danger1
+safe0
+safe1
