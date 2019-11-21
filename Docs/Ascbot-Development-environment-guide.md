@@ -176,12 +176,12 @@ $ pip install Adafruit-SSD1306
 
 
 
-下载Ascbot0.3.0-py2.7.egg.tar.gzip，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar.gzip) 
+下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
 
 ```
  $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
- $ tar zxvf Ascbot-0.3.0-py2.7.egg.tar.gzip
- $ easy_install Ascbot-0.3.0-py2.7.egg                  
+ $ tar -xvf ascbot-0.3.0-py2.7.egg.tar
+ $ easy_install ascbot-0.3.0-py2.7.egg                  
 ```
 ### 4.2   设置小车使用的I2C总线
 Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设置。
