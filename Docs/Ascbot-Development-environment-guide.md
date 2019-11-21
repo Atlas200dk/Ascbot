@@ -176,11 +176,11 @@ $ pip install Adafruit-SSD1306
 
 
 
-下载Ascbot0.3.0-py2.7.egg.tar.gz，并解压
+下载Ascbot0.3.0-py2.7.egg.tar.gzip，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar.gzip) 
 
 ```
  $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
- $ tar zxvf Ascbot-0.3.0-py2.7.egg.tar.gz
+ $ tar zxvf Ascbot-0.3.0-py2.7.egg.tar.gzip
  $ easy_install Ascbot-0.3.0-py2.7.egg                  
 ```
 ### 4.2   设置小车使用的I2C总线
