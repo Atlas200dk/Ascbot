@@ -99,24 +99,15 @@ $ apt update
 
         $ su -
  在root用户下，安装ROS系统，开发用的版本是ros1 kentic的版本，如果有安装失败，命令行会有对应的错误输出；ROS的安装可以参照[ROS官方教程](http://wiki.ros.org/kinetic/Installation/Ubuntu),[中文安装教程](https://www.ncnynl.com/archives/201801/2273.html)。
-       同时按照官方的教程，在开发板中创建ros的工作空间；按照如下的方式创建工作空间也可以：
-       
-        $ mkdir -p ~/catkin_ws/src
-        $ cd ~/catkin_ws/
-        $ source devel/setup.bash
-        
-要想保证工作空间已配置正确需确保ROS_PACKAGE_PATH环境变量包含你的工作空间目录，采用以下命令查看：
-
-        $ echo $ROS_PACKAGE_PATH
-        /home/youruser/catkin_ws/src:/opt/ros/kinetic/share:/opt/ros/kinetic/stacks
+       同时按照官方的教程，在开发板中创建ros的工作空间；也可按照第3.4节查看创建工作空间。
         
 ## 3.4 Atlas 200 DK  创建ros工作空间
 
 ros环境和驱动已经搭建完毕，创建工作空间：
 
 ```
-    $ mkdir -p home/catkin_ws/src
-    $ cd  home/catkin_ws/src
+    $ mkdir -p ~/home/catkin_ws/src
+    $ cd  ~home/catkin_ws/src
     $ catkin_init_workspace
     $ cd ..
     $ catkin_make
@@ -214,8 +205,8 @@ Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设�
 ### 5.1  	创建ros工作空间
 ros环境和驱动已经搭建完毕，下面创建工作空间，在终端依次输入以下命令：
 
-     $ mkdir -p home/catkin_ws/src
-     $ cd  home/catkin_ws/src
+     $ mkdir -p ~/home/catkin_ws/src
+     $ cd  ~/home/catkin_ws/src
      $ catkin_init_workspace
      $ cd ..
      $ catkin_make

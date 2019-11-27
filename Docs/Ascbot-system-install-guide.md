@@ -21,14 +21,18 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 ​       在root用户下，安装ROS系统，开发用的版本是ros1 kentic的版本，如果有安装失败，命令行会有对应的错误输出；ROS的安装可以参照[ROS官方教程](http://wiki.ros.org/kinetic/Installation/Ubuntu),[中文安装教程](https://www.ncnynl.com/archives/201801/2273.html)。
        同时按照官方的教程，在开发板中创建ros的工作空间；按照如下的方式创建工作空间也可以：
        
-        $ mkdir -p ~/catkin_ws/src
-        $ cd ~/catkin_ws/
+        $ mkdir -p ~/home/catkin_ws/src
+        $ cd ~/home/catkin_ws/src
+        $ catkin_init_workspace
+        $cd ..
+        $ catkin_make
+        $ source /opt/ros/kinetic/setup.bash
         $ source devel/setup.bash
         
 要想保证工作空间已配置正确需确保ROS_PACKAGE_PATH环境变量包含你的工作空间目录，采用以下命令查看：
 
         $ echo $ROS_PACKAGE_PATH
-        /home/youruser/catkin_ws/src:/opt/ros/kinetic/share:/opt/ros/kinetic/stacks
+        /root/catkin_ws/src/:/opt/ros/kinetic/share
 
         
        
@@ -36,11 +40,11 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 # 3. Ascbot程序的下载和安装
-​1）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/AscbotAppRelease.zip) 版本，解压缩到本地路径 ./ascbot
+​1）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/AscbotAppRelease.zip) 版本，解压缩到本地路径，例如~/
 ​2）在PC端通过ssh远程登录到Atlas 200 DK 系统   用户名： root    密码：Mind@123
  3)  在root用户下执行升级操作，终端输入命令 su - ，密码是Mind@123
-​4）把scp 命令把 ./ascbot/* 从PC拷贝到Atlas 200 DK的  /root/home/catkin_ws/ 目录下
-​5）执行脚本  /root/home/catkin_ws/rosAutoInstall.sh，完成安装以及部署。
+​4）用scp 命令把解压出来的文件夹（例如~/AscbotAppRelease） 从PC拷贝到Atlas 200 DK的  /root/home/catkin_ws/ 目录下
+​5）执行脚本  /root/home/catkin_ws/AscbotAppRelease/rosAutoInstall.sh，完成安装以及部署。
 ​          确认输出信息，确认所有组件安装成功。
 ​6）重启Atlas 200 DK.
 
