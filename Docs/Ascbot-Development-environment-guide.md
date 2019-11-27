@@ -93,15 +93,23 @@ $  vim /etc/resolv.conf
 ```apt update
 $ apt update
 ```
-
-
-
 ## 3.3 Atlas 200 DK 安装ros
+将SD卡插入Atlas 200 DK，启动并按照华为教程将Atlas 200 DK接入internet,指的是能够链接外网。
+首先进入开发板root用户下 
 
-ros的安装可以参照[ros官方教程](wiki.ros.org/kinetic/Installation/Ubuntu)
+        $ su -
+ 在root用户下，安装ROS系统，开发用的版本是ros1 kentic的版本，如果有安装失败，命令行会有对应的错误输出；ROS的安装可以参照[ROS官方教程](http://wiki.ros.org/kinetic/Installation/Ubuntu),[中文安装教程](https://www.ncnynl.com/archives/201801/2273.html)。
+       同时按照官方的教程，在开发板中创建ros的工作空间；按照如下的方式创建工作空间也可以：
+       
+        $ mkdir -p ~/catkin_ws/src
+        $ cd ~/catkin_ws/
+        $ source devel/setup.bash
+        
+要想保证工作空间已配置正确需确保ROS_PACKAGE_PATH环境变量包含你的工作空间目录，采用以下命令查看：
 
-
-
+        $ echo $ROS_PACKAGE_PATH
+        /home/youruser/catkin_ws/src:/opt/ros/kinetic/share:/opt/ros/kinetic/stacks
+        
 ## 3.4 Atlas 200 DK  创建ros工作空间
 
 ros环境和驱动已经搭建完毕，创建工作空间：
@@ -179,7 +187,6 @@ $ pip install Adafruit-SSD1306
 下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
 
 ```
- $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
  $ tar -xvf ascbot-0.3.0-py2.7.egg.tar
  $ easy_install ascbot-0.3.0-py2.7.egg                  
 ```
