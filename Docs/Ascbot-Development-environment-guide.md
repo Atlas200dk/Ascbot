@@ -88,42 +88,21 @@ $  vim /etc/resolv.conf
         deb http://mirrors.aliyun.com/ubuntu/ xenial-security universe
         deb http://mirrors.aliyun.com/ubuntu/ xenial-security multiverse
         deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates main multiverse restricted universe 
+ 
 更新系统源： 
 
-```apt update
-$ apt update
-```
+       apt update
+
 ## 3.3 Atlas 200 DK 安装ros
 将SD卡插入Atlas 200 DK，启动并按照华为教程将Atlas 200 DK接入internet,指的是能够链接外网。
 首先进入开发板root用户下 
 
         $ su -
  在root用户下，安装ROS系统，开发用的版本是ros1 kentic的版本，如果有安装失败，命令行会有对应的错误输出；ROS的安装可以参照[ROS官方教程](http://wiki.ros.org/kinetic/Installation/Ubuntu),[中文安装教程](https://www.ncnynl.com/archives/201801/2273.html)。
-       同时按照官方的教程，在开发板中创建ros的工作空间；按照如下的方式创建工作空间也可以：
-       
-        $ mkdir -p ~/catkin_ws/src
-        $ cd ~/catkin_ws/
-        $ source devel/setup.bash
-        
-要想保证工作空间已配置正确需确保ROS_PACKAGE_PATH环境变量包含你的工作空间目录，采用以下命令查看：
-
-        $ echo $ROS_PACKAGE_PATH
-        /home/youruser/catkin_ws/src:/opt/ros/kinetic/share:/opt/ros/kinetic/stacks
+       同时按照官方的教程，在开发板中创建ros的工作空间；也可按照第3.4节查看创建工作空间。
         
 ## 3.4 Atlas 200 DK  创建ros工作空间
-
-ros环境和驱动已经搭建完毕，创建工作空间：
-
-```
-    $ mkdir -p home/catkin_ws/src
-    $ cd  home/catkin_ws/src
-    $ catkin_init_workspace
-    $ cd ..
-    $ catkin_make
-    $ source devel/setup.bash
-    $ source /opt/ros/kinetic/setup.bash
-```
-
+此部分请移步Ascbot-system-install-guide.md文档查看。
 
 
 ## 4. Atlas 200 DK 安装小车部件驱动程序
@@ -143,50 +122,29 @@ $ apt-get install -y python-dev
 
 OLED显示屏型号 SSD1306，安装Adafruit-SSD1306驱动：
 
-``` $ pip install Adafruit-SSD1306
-$ pip install Adafruit-SSD1306
-```
-
-
+    $ pip install Adafruit-SSD1306
 
 ## 4.2 安装motor驱动
 
 安装git，在终端输入命令：
 
-~~~$ apt-get install git
- $ apt-get install git
 ~~~
-
+$ apt-get install git
+~~~
 创建源码保存路径，并下载源码 ：
 
 ```
  $ cd ~
  $ mkdir backup
  $ cd backup
-```
-~~~
  $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
  $ python setup.py build
  $ python setup.py install
- $ apt install python-opencv
- $ pip install ipywidgets
- $ sudo apt-get install libjpeg8-dev
- $ sudo apt-get install libpng12-dev
- $ sudo apt-get install libfreetype6-dev
- $ sudo apt-get install zlib1g-dev
- $ sudo apt-get install libwebp-dev
- $ sudo apt-get install libtiff5-dev
- $ sudo apt-get install libopenjpeg-dev
- $ sudo apt-get install libzip-dev
- $ pip install Pillow
- $ pip install traitlets
-~~~
-
-
-
+ $ apt install python-opencv Pillow traitlets
+ $ sudo apt-get install  ipywidgets libjpeg8-dev libpng12-dev  libfreetype6-dev zlib1g-dev libwebp-dev  libtiff5-dev libopenjpeg-dev  libzip-dev 
+  
 下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
 
-```
  $ tar -xvf ascbot-0.3.0-py2.7.egg.tar
  $ easy_install ascbot-0.3.0-py2.7.egg                  
 ```
@@ -195,34 +153,18 @@ Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设�
 
       $ cd /usr/local/lib/python2.7/dist-packages/ascbot
       $ vim robot.py
-~~~
+
    找到行： i2c_bus = traitlets.Integer(default_value=1).tag(config=True)
-
    修改为： i2c_bus = traitlets.Integer(default_value=2).tag(config=True)
-~~~
 
-~~~
- $ vim init__.py
-~~~
+     $ vim __init__.py
+ ~~~
+ 找到行： from .object_detection import ObjectDetector 
+ 注释掉： #from .object_detection import ObjectDetector                
 
-~~~
-   找到行： from .object_detection import ObjectDetector 
-   注释掉： #from .object_detection import ObjectDetector                
-~~~
+        注意：若没发现此行，可忽略。
 
-## 5  ros工作空间和节点的创建
-### 5.1  	创建ros工作空间
-ros环境和驱动已经搭建完毕，下面创建工作空间，在终端依次输入以下命令：
-
-     $ mkdir -p home/catkin_ws/src
-     $ cd  home/catkin_ws/src
-     $ catkin_init_workspace
-     $ cd ..
-     $ catkin_make
-     $ source devel/setup.bash
-     $ source /opt/ros/kinetic/setup.bash
-
-## 6 手机APP开发环境搭建
+## 5 手机APP开发环境搭建
 
 具体请参考[Google Android应用开发指南](https://developer.android.google.cn)
 
