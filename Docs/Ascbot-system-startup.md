@@ -13,7 +13,8 @@
 ![Ascbot Smartcar](./AscbotImg/ascbot-startup-003-0.jpg)
 ### （3）按下小车电池上开机键静待至小车系统LED灯全部亮起
 ![Ascbot Smartcar](./AscbotImg/ascbot-startup-003.jpg)
-### （4）安卓手机连接小车WiFi（HUAWEI-ABCDEF）
+### （4）检查路由器连接开关处于打开位置，如下图，安卓手机连接小车WiFi（HUAWEI-ABCDEF）
+![Ascbot Smartcar](./AscbotImg/ascbot-startup-ws331a.jpg)
    注：ABCDEF是路由器的MAC地址后六位。
 
 ### （5）下载手机端控制应用ascbot-remotectrl.apk ， [下载地址](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-remotectrlv1.0.apk)
