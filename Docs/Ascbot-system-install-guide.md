@@ -41,7 +41,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 # 3. Ascbot程序的下载和安装
 1) 首先把无线路由器的锁关掉，以防终端链接不成功wifi
-​2）首先在PC端上面，从码云上下载最新[release](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/AscbotAppRelease.zip) 版本，解压缩到本地路径，例如~/
+​2）首先在PC端上面，从码云上下载最新[release](https://thundercomm.s3.ap-northeast-1.amazonaws.com/public/Ascbot/AscbotAppRelease.zip) 版本，解压缩到本地路径，例如~/
 ​3）在PC端通过ssh远程登录到Atlas 200 DK 系统   用户名： root    密码：Mind@123
  4)  在root用户下执行升级操作，终端输入命令 su - ，密码是Mind@123
 ​5）用scp 命令把解压出来的文件夹（例如~/AscbotAppRelease） 从PC拷贝到Atlas 200 DK的  /root/home/catkin_ws/ 目录下
@@ -52,7 +52,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 # 4. 安装手机端控制应用
-​        1）下载手机端控制应用ascbot-remotectrl.apk ，[下载地址](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-remotectrlv1.0.apk)
+​        1）下载手机端控制应用ascbot-remotectrl.apk ，[下载地址](https://thundercomm.s3.ap-northeast-1.amazonaws.com/public/Ascbot/ascbot-remotectrlv1.0.apk)
 
 ​        2）安装：ascbot-remotectrl.apk 到手机
 
