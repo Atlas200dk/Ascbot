@@ -58,7 +58,7 @@
 
 ```
 ssh HwHiAiUser@192.168.3.9
-./ascendcamera -v -c 0 --fps 20 -t 60 -w 1280 -h 720 -0 video_name.h264
+./ascendcamera -v -c 0 --fps 20 -t 60 -w 1280 -h 720 -o video_name.h264
 ```
 
 其中，`--fps`是每秒钟帧数（1-20），代表采样频率；`-t`是采样时长；`-w`和`-h`是采样分辨率。
