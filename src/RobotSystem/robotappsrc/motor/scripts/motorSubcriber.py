@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
-from jetbot import Robot
+from ascbot import Robot
 from motor.msg import MotorSpeed
 from std_msgs.msg import Int16
 from std_msgs.msg import Int8
@@ -24,10 +24,11 @@ import inspect
 import sys
 
 
-REMOTE=3
+
 WANDER=0
 TRACE=1
 OBJECTFOLLOW=2
+REMOTE=3
 STOP = 4
 TIME_STEP_WANDER=0.030
 TIME_STEP_DROPGOBACK=1.0
@@ -78,12 +79,12 @@ class Motor():
         shmdt.argtypes = [POINTER(c_void_p)]  
         shmdt.restype = c_int 
 	    
-        self.speed_gain_slider = 0.4
-        self.steering_gain_slider = 0.4#0.4
-        self.speed_slider = 0.2
+        self.speed_gain_slider = 0.45
+        self.steering_gain_slider = 0.43#0.4
+        self.speed_slider = 0.4
         self.steering_dgain_slider = 0.4#0.5
-        self.steering_bias_slider = 0.01#0.01
-
+        self.steering_bias_slider = -0.01#0.01
+        self.free_steering=0.43
 
     def callback(self, data):
 #         print('remote_test')
@@ -159,6 +160,10 @@ class Motor():
             # disable timer first
             global shmid
             if shmid < 0 :
+                
+                
+                
+                
                 print ("Waiting for being infected...")
                 while not rospy.is_shutdown():
                     shmid = self.shmget(self.SHM_KEY, self.SHM_SIZE, 0o777)
@@ -178,8 +183,33 @@ class Motor():
                 except :
                     print('Timer is unactivated.')
             self.timer = rospy.Timer(rospy.Duration(TIME_STEP_TRACE), self.ros_timer_callback, oneshot=False)
-#        elif self.nState==OBJECTFOLLOW :
+        elif self.nState==OBJECTFOLLOW :
 	    #nothing
+            global shmid
+            self.robot.set_motors(0, 0)
+            self.robot.stop()
+            if shmid < 0 :
+                print ("Waiting for being infected...")
+                while not rospy.is_shutdown():
+                    shmid = self.shmget(self.SHM_KEY, self.SHM_SIZE, 0o777)
+                    if shmid >= 0:
+                        global shm_addr
+                        shm_addr = self.shmat(shmid, None, 0)
+                        break
+                print ("Infected.")
+            if shmid >= 0 :
+                 memset(shm_addr+1*4,0,1)  #out_roadfollowingSwitch
+                 memset(shm_addr+2*4,0,1)           #out_collisionSwitch
+                 memset(shm_addr+3*4,1,1)           #out_objectDetectionSwitch    
+                 memset(shm_addr+4*4,1,1)           #out_roadobjectDetecttionSwitch
+            if self.timer !=None :
+                try :
+                    self.timer.shutdown()
+                except :
+                    print('Timer is unactivated.')
+            self.timer = rospy.Timer(rospy.Duration(TIME_STEP_TRACE), self.ros_timer_callback, oneshot=False)     
+                 
+                 
         elif self.nState==REMOTE :
             self.robot.set_motors(0, 0)
             self.robot.stop()
@@ -193,7 +223,8 @@ class Motor():
                  memset(shm_addr+2*4,0,1)           #out_collisionSwitch
                  memset(shm_addr+3*4,0,1)           #out_objectDetectionSwitch    
                  memset(shm_addr+4*4,0,1)           #out_roadobjectDetecttionSwitch
-            
+            self.robot.set_motors(0, 0)
+            self.robot.stop()
         elif self.nState==STOP :
             self.robot.set_motors(0, 0)
             self.robot.stop()
@@ -207,6 +238,8 @@ class Motor():
                 memset(shm_addr+2*4,0,1)           #out_collisionSwitch
                 memset(shm_addr+3*4,0,1)           #out_objectDetectionSwitch    
                 memset(shm_addr+4*4,0,1)           #out_roadobjectDetecttionSwitch
+            self.robot.set_motors(0, 0)
+            self.robot.stop()
         self.publog(self.pubRobotLog,time.time(),'motor',sys._getframe().f_code.co_name,sys._getframe().f_lineno,3,str(data.data))     
     #wp start
     def execute(self,change):
@@ -223,8 +256,8 @@ class Motor():
         self.publog(self.pubRobotLog,time.time(),'motor',sys._getframe().f_code.co_name,sys._getframe().f_lineno,3,'steering_slider:' + str(steering_slider))
         self.robot.left_motor.value = max(min(self.speed_slider+ steering_slider, 1.0), 0.000)
         self.robot.right_motor.value = max(min(self.speed_slider - steering_slider, 1.0), 0.000)
-#         print("paul l speed ",self.robot.left_motor.value)
-#         print("paul r speed ",self.robot.right_motor.value)
+        print("paul l speed ",self.robot.left_motor.value)
+        print("paul r speed ",self.robot.right_motor.value)
         print("paul  angle ",angle)
         self.publog(self.pubRobotLog,time.time(),'motor',sys._getframe().f_code.co_name,sys._getframe().f_lineno,3,'left speed:' + str(self.robot.left_motor.value) + 'right speed:' +  str(self.robot.right_motor.value))
 	#self.robot.set_motors(l_wheel, r_wheel)
@@ -240,8 +273,8 @@ class Motor():
             self.drop_control_motor()
         elif self.nState == TRACE :
             self.angle_control_motor()
-        #elif nState == REMOTE :
-        #    # disable timer
+        elif self.nState == OBJECTFOLLOW :
+            self.object_follow()
         #    nState == 0
     
     ## detach the memory block
@@ -253,7 +286,37 @@ class Motor():
     def print_hex(self, bytes):
         l = [hex(int(i)) for i in bytes]
         print(" ".join(l))
-    
+    def object_follow(self):
+        memset(shm_addr+1*4,0,1)           #out_roadfollowingSwitch
+        memset(shm_addr+2*4,0,1)           #out_collisionSwitch
+        memset(shm_addr+3*4,1,1)           #out_objectDetectionSwitch    
+        memset(shm_addr+4*4,1,1)           #out_roadobjectDetecttionSwitc
+        changeStatus =  struct.unpack('iiii', string_at(shm_addr+5*4,4*4))
+        print(changeStatus)
+        angle_x_y =  struct.unpack('iii', string_at(shm_addr+9*4,3*4))
+#        print("paul anglexy = ",angle_x_y)
+        collisionStatus =  struct.unpack('i', string_at(shm_addr+12*4,4))
+#             print(collisionStatus)
+        motor_angle_RunStatus =  struct.unpack('ii', string_at(shm_addr+13*4,2*4))
+        #       print(motor_angle_RunStatus)
+        objNum = struct.unpack('i', string_at(shm_addr+15*4,4))
+        #      print(objNum)
+        if objNum[0] >=1 :
+            for i in range(0,objNum[0]):
+        #            print("index:%d " % i)
+                objectData =  struct.unpack('iiiiif', string_at(shm_addr+16*4+i*24,24))
+        #           print(objectData)  
+        
+        if changeStatus[2] == 1000  :   # todo: this value has to be modified after wandering training
+        ## not safe
+            self.robot.set_motors(0, 0)
+        else:
+            angleData=changeStatus[2]
+        #    angleData = motor_angle_RunStatus[0] #bytearray(string_at(shm_addr+4,4))    #in_angle
+            print("paul angleData =",angleData)
+            self.execute(angleData)
+        
+        
     ##angle control speed of motor (shared memory ver.)
     def angle_control_motor(self):
             
@@ -349,18 +412,19 @@ class Motor():
 #                    print("index:%d " % i)
                    objectData =  struct.unpack('iiiiif', string_at(shm_addr+16*4+i*24,24))
 
-#             print("motor angle:",motor_angle_RunStatus[0])
+            print("motor collision :",collisionStatus[0] )
+            print("motor angle:",motor_angle_RunStatus[0])
             #if iObstacled == 0 or iObstacled == 1 :   # todo: this value has to be modified after wandering training
             if collisionStatus[0] == 1 :
                 if motor_angle_RunStatus[0] == -90 :
-                    self.robot.set_motors(-0.4, 0.4)
+                    self.robot.set_motors(-self.free_steering, self.free_steering)
                 elif motor_angle_RunStatus[0] == 90 :   # todo: this value has to be modified after wandering training
                 # if it is not safe, whether is 
-                    self.robot.set_motors(0.4, -0.4)
+                    self.robot.set_motors(self.free_steering, -self.free_steering)
                 else:
-                    self.robot.set_motors(0.4, 0.4)
+                    self.robot.set_motors(self.free_steering, self.free_steering)
             else :
-                    self.robot.set_motors(0.4, -0.4)
+                    self.robot.set_motors(self.free_steering, -self.free_steering)
     
     def listener(self):
         rospy.Subscriber('change_mode', Int8, self.switch_callback)

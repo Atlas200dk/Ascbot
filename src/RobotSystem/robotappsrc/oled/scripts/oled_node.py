@@ -8,7 +8,7 @@ from std_msgs.msg import Int8
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
-from jetbot.utils.utils import get_ip_address
+from ascbot.utils.utils import get_ip_address
 
 import subprocess
 import ros

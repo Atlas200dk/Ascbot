@@ -12,8 +12,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef RAPIDJSON_INTERNAL_REGEX_H_
-#define RAPIDJSON_INTERNAL_REGEX_H_
+#ifndef _RAPIDJSON_INTERNAL_REGEX_H_
+#define _RAPIDJSON_INTERNAL_REGEX_H_
 
 #include "../allocators.h"
 #include "../stream.h"
@@ -26,7 +26,7 @@ RAPIDJSON_DIAG_OFF(switch-enum)
 RAPIDJSON_DIAG_OFF(implicit-fallthrough)
 #elif defined(_MSC_VER)
 RAPIDJSON_DIAG_PUSH
-RAPIDJSON_DIAG_OFF(4512) // assignment operator could not be generated
+RAPIDJSON_DIAG_OFF(4512)  // assignment operator could not be generated
 #endif
 
 #ifdef __GNUC__
@@ -50,11 +50,11 @@ namespace internal {
 template <typename SourceStream, typename Encoding>
 class DecodedStream {
 public:
-    DecodedStream(SourceStream& ss) : ss_(ss), codepoint_() { Decode(); }
+    explicit DecodedStream(SourceStream& ss) : ss_(ss), codepoint_() { Decode(); }
     unsigned Peek() { return codepoint_; }
     unsigned Take() {
         unsigned c = codepoint_;
-        if (c) // No further decoding when '\0'
+        if (c)  // No further decoding when '\0'
             Decode();
         return c;
     }
@@ -71,8 +71,8 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 // GenericRegex
-
-static const SizeType kRegexInvalidState = ~SizeType(0);  //!< Represents an invalid index in GenericRegex::State::out, out1
+//!< Represents an invalid index in GenericRegex::State::out, out1
+static const SizeType kRegexInvalidState = ~SizeType(0);
 static const SizeType kRegexInvalidRange = ~SizeType(0);
 
 template <typename Encoding, typename Allocator>
@@ -107,7 +107,7 @@ class GenericRegexSearch;
     - \c \\v Vertical tab (U+000B)
 
     \note This is a Thompson NFA engine, implemented with reference to
-        Cox, Russ. "Regular Expression Matching Can Be Simple And Fast (but is slow in Java, Perl, PHP, Python, Ruby,...).", 
+        Cox, Russ. "Regular Expression Matching Can Be Simple And Fast (but is slow in Java, Perl, PHP, Python, Ruby,...).",
         https://swtch.com/~rsc/regexp/regexp1.html
 */
 template <typename Encoding, typename Allocator = CrtAllocator>
@@ -120,15 +120,13 @@ public:
     explicit GenericRegex(const Ch* source, Allocator* allocator = 0) :
         ownAllocator_(allocator ? 0 : RAPIDJSON_NEW(Allocator)()), allocator_(allocator ? allocator : ownAllocator_),
         states_(allocator_, 256), ranges_(allocator_, 256), root_(kRegexInvalidState), stateCount_(), rangeCount_(),
-        anchorBegin_(), anchorEnd_()
-    {
+        anchorBegin_(), anchorEnd_() {
         GenericStringStream<Encoding> ss(source);
         DecodedStream<GenericStringStream<Encoding>, Encoding> ds(ss);
         Parse(ds);
     }
 
-    ~GenericRegex()
-    {
+    ~GenericRegex() {
         RAPIDJSON_DELETE(ownAllocator_);
     }
 
@@ -166,7 +164,7 @@ private:
     struct Frag {
         Frag(SizeType s, SizeType o, SizeType m) : start(s), out(o), minIndex(m) {}
         SizeType start;
-        SizeType out; //!< link-list of all output states
+        SizeType out;  //!< link-list of all output states
         SizeType minIndex;
     };
 
@@ -260,10 +258,9 @@ private:
                                 m = kInfinityQuantifier;
                             else if (!ParseUnsigned(ds, &m) || m < n)
                                 return;
-                        }
-                        else
+                        } else {
                             m = n;
-
+                        }
                         if (!EvalQuantifier(operandStack, n, m) || ds.Peek() != '}')
                             return;
                         ds.Take();
@@ -287,12 +284,12 @@ private:
                     ImplicitConcatenation(atomCountStack, operatorStack);
                     break;
 
-                case '\\': // Escape character
+                case '\\':  // Escape character
                     if (!CharacterEscape(ds, &codepoint))
-                        return; // Unsupported escape character
+                        return;  // Unsupported escape character
                     // fall through to default
 
-                default: // Pattern character
+                default:  // Pattern character
                     PushOperand(operandStack, codepoint);
                     ImplicitConcatenation(atomCountStack, operatorStack);
             }
@@ -312,7 +309,7 @@ private:
             printf("root: %d\n", root_);
             for (SizeType i = 0; i < stateCount_ ; i++) {
                 State& s = GetState(i);
-                printf("[%2d] out: %2d out1: %2d c: '%c'\n", i, s.out, s.out1, (char)s.codepoint);
+                printf("[%2d] out: %2d out1: %2d c: '%c'\n", i, s.out, s.out1, static_cast<char>(s.codepoint));
             }
             printf("\n");
 #endif
@@ -371,7 +368,8 @@ private:
                     Frag e2 = *operandStack.template Pop<Frag>(1);
                     Frag e1 = *operandStack.template Pop<Frag>(1);
                     SizeType s = NewState(e1.start, e2.start, 0);
-                    *operandStack.template Push<Frag>() = Frag(s, Append(e1.out, e2.out), Min(e1.minIndex, e2.minIndex));
+                    *operandStack.template Push<Frag>() = Frag(s,
+                            Append(e1.out, e2.out), Min(e1.minIndex, e2.minIndex));
                     return true;
                 }
                 return false;
@@ -416,16 +414,16 @@ private:
         RAPIDJSON_ASSERT(operandStack.GetSize() >= sizeof(Frag));
 
         if (n == 0) {
-            if (m == 0)                             // a{0} not support
+            if (m == 0) {                              // a{0} not support
                 return false;
-            else if (m == kInfinityQuantifier)
+            } else if (m == kInfinityQuantifier) {
                 Eval(operandStack, kZeroOrMore);    // a{0,} -> a*
-            else {
+            } else {
                 Eval(operandStack, kZeroOrOne);         // a{0,5} -> a?
                 for (unsigned i = 0; i < m - 1; i++)
                     CloneTopOperand(operandStack);      // a{0,5} -> a? a? a? a? a?
                 for (unsigned i = 0; i < m - 1; i++)
-                    Eval(operandStack, kConcatenation); // a{0,5} -> a?a?a?a?a?
+                    Eval(operandStack, kConcatenation);  // a{0,5} -> a?a?a?a?a?
             }
             return true;
         }
@@ -433,15 +431,15 @@ private:
         for (unsigned i = 0; i < n - 1; i++)        // a{3} -> a a a
             CloneTopOperand(operandStack);
 
-        if (m == kInfinityQuantifier)
+        if (m == kInfinityQuantifier) {
             Eval(operandStack, kOneOrMore);         // a{3,} -> a a a+
-        else if (m > n) {
+        } else if (m > n) {
             CloneTopOperand(operandStack);          // a{3,5} -> a a a a
             Eval(operandStack, kZeroOrOne);         // a{3,5} -> a a a a?
             for (unsigned i = n; i < m - 1; i++)
                 CloneTopOperand(operandStack);      // a{3,5} -> a a a a? a?
             for (unsigned i = n; i < m; i++)
-                Eval(operandStack, kConcatenation); // a{3,5} -> a a aa?a?
+                Eval(operandStack, kConcatenation);  // a{3,5} -> a a aa?a?
         }
 
         for (unsigned i = 0; i < n - 1; i++)
@@ -453,8 +451,9 @@ private:
     static SizeType Min(SizeType a, SizeType b) { return a < b ? a : b; }
 
     void CloneTopOperand(Stack<Allocator>& operandStack) {
-        const Frag src = *operandStack.template Top<Frag>(); // Copy constructor to prevent invalidation
-        SizeType count = stateCount_ - src.minIndex; // Assumes top operand contains states in [src->minIndex, stateCount_)
+        const Frag src = *operandStack.template Top<Frag>();  // Copy constructor to prevent invalidation
+        // Assumes top operand contains states in [src->minIndex, stateCount_)
+        SizeType count = stateCount_ - src.minIndex;
         State* s = states_.template Push<State>(count);
         memcpy(s, &GetState(src.minIndex), count * sizeof(State));
         for (SizeType j = 0; j < count; j++) {
@@ -473,8 +472,8 @@ private:
         if (ds.Peek() < '0' || ds.Peek() > '9')
             return false;
         while (ds.Peek() >= '0' && ds.Peek() <= '9') {
-            if (r >= 429496729 && ds.Peek() > '5') // 2^32 - 1 = 4294967295
-                return false; // overflow
+            if (r >= 429496729 && ds.Peek() > '5')  // 2^32 - 1 = 4294967295
+                return false;  // overflow
             r = r * 10 + (ds.Take() - '0');
         }
         *u = r;
@@ -502,7 +501,7 @@ private:
             case ']':
                 if (start == kRegexInvalidRange)
                     return false;   // Error: nothing inside []
-                if (step == 2) { // Add trailing '-'
+                if (step == 2) {  // Add trailing '-'
                     SizeType r = NewRange('-');
                     RAPIDJSON_ASSERT(current != kRegexInvalidRange);
                     GetRange(current).next = r;
@@ -515,12 +514,11 @@ private:
             case '\\':
                 if (ds.Peek() == 'b') {
                     ds.Take();
-                    codepoint = 0x0008; // Escape backspace character
-                }
-                else if (!CharacterEscape(ds, &codepoint))
+                    codepoint = 0x0008;  // Escape backspace character
+                } else if (!CharacterEscape(ds, &codepoint)) {
                     return false;
                 // fall through to default
-
+                }
             default:
                 switch (step) {
                 case 1:
@@ -584,7 +582,7 @@ private:
             case 't': *escapedCodepoint = 0x0009; return true;
             case 'v': *escapedCodepoint = 0x000B; return true;
             default:
-                return false; // Unsupported escape character
+                return false;  // Unsupported escape character
         }
     }
 
@@ -611,8 +609,7 @@ public:
 
     explicit GenericRegexSearch(const RegexType& regex, Allocator* allocator = 0) :
         regex_(regex), allocator_(allocator), ownAllocator_(0),
-        state0_(allocator, 0), state1_(allocator, 0), stateSet_()
-    {
+        state0_(allocator, 0), state1_(allocator, 0), stateSet_() {
         RAPIDJSON_ASSERT(regex_.IsValid());
         if (!allocator_)
             ownAllocator_ = allocator_ = RAPIDJSON_NEW(Allocator)();
@@ -665,12 +662,12 @@ private:
             std::memset(stateSet_, 0, stateSetSize);
             next->Clear();
             matched = false;
-            for (const SizeType* s = current->template Bottom<SizeType>(); s != current->template End<SizeType>(); ++s) {
+            for (const SizeType* s = current->template Bottom<SizeType>();
+                    s != current->template End<SizeType>(); ++s) {
                 const State& sr = regex_.GetState(*s);
                 if (sr.codepoint == codepoint ||
                     sr.codepoint == RegexType::kAnyCharacterClass ||
-                    (sr.codepoint == RegexType::kRangeCharacterClass && MatchRange(sr.rangeStart, codepoint)))
-                {
+                    (sr.codepoint == RegexType::kRangeCharacterClass && MatchRange(sr.rangeStart, codepoint))) {
                     matched = AddState(*next, sr.out) || matched;
                     if (!anchorEnd && matched)
                         return true;
@@ -693,15 +690,15 @@ private:
         RAPIDJSON_ASSERT(index != kRegexInvalidState);
 
         const State& s = regex_.GetState(index);
-        if (s.out1 != kRegexInvalidState) { // Split
+        if (s.out1 != kRegexInvalidState) {  // Split
             bool matched = AddState(l, s.out);
             return AddState(l, s.out1) || matched;
-        }
-        else if (!(stateSet_[index >> 5] & (1u << (index & 31)))) {
+        }  else if (!(stateSet_[index >> 5] & (1u << (index & 31)))) {
             stateSet_[index >> 5] |= (1u << (index & 31));
             *l.template PushUnsafe<SizeType>() = index;
         }
-        return s.out == kRegexInvalidState; // by using PushUnsafe() above, we can ensure s is not validated due to reallocation.
+        // by using PushUnsafe() above, we can ensure s is not validated due to reallocation.
+        return s.out == kRegexInvalidState;
     }
 
     bool MatchRange(SizeType rangeIndex, unsigned codepoint) const {
@@ -726,7 +723,7 @@ private:
 typedef GenericRegex<UTF8<> > Regex;
 typedef GenericRegexSearch<Regex> RegexSearch;
 
-} // namespace internal
+}  // namespace internal
 RAPIDJSON_NAMESPACE_END
 
 #ifdef __GNUC__
@@ -737,4 +734,4 @@ RAPIDJSON_DIAG_POP
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_INTERNAL_REGEX_H_
+#endif  // _RAPIDJSON_INTERNAL_REGEX_H_

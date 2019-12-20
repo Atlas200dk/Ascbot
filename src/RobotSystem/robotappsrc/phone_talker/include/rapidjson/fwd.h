@@ -12,8 +12,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef RAPIDJSON_FWD_H_
-#define RAPIDJSON_FWD_H_
+#ifndef _RAPIDJSON_FWD_H_
+#define _RAPIDJSON_FWD_H_
 
 #include "rapidjson.h"
 
@@ -91,12 +91,14 @@ typedef GenericReader<UTF8<char>, UTF8<char>, CrtAllocator> Reader;
 
 // writer.h
 
-template<typename OutputStream, typename SourceEncoding, typename TargetEncoding, typename StackAllocator, unsigned writeFlags>
+template<typename OutputStream, typename SourceEncoding, typename TargetEncoding,
+          typename StackAllocator, unsigned writeFlags>
 class Writer;
 
 // prettywriter.h
 
-template<typename OutputStream, typename SourceEncoding, typename TargetEncoding, typename StackAllocator, unsigned writeFlags>
+template<typename OutputStream, typename SourceEncoding, typename TargetEncoding,
+          typename StackAllocator, unsigned writeFlags>
 class PrettyWriter;
 
 // document.h
@@ -148,4 +150,4 @@ typedef GenericSchemaValidator<SchemaDocument, BaseReaderHandler<UTF8<char>, voi
 
 RAPIDJSON_NAMESPACE_END
 
-#endif    // RAPIDJSON_RAPIDJSONFWD_H_
+#endif    // _RAPIDJSON_FWD_H_

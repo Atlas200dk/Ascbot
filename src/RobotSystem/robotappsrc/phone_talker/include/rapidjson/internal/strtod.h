@@ -7,20 +7,20 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
+// Unless required by applicable law or agreed to in writing, software distributed
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef RAPIDJSON_STRTOD_
-#define RAPIDJSON_STRTOD_
-
+#ifndef RAPIDJSON_INTERNAL_STRTOD_H_
+#define RAPIDJSON_INTERNAL_STRTOD_H_
+#include <climits>
+#include <limits>
 #include "ieee754.h"
 #include "biginteger.h"
 #include "diyfp.h"
 #include "pow10.h"
-#include <climits>
-#include <limits>
+
 
 RAPIDJSON_NAMESPACE_BEGIN
 namespace internal {
@@ -39,9 +39,9 @@ inline double StrtodNormalPrecision(double d, int p) {
         // Prevent expSum < -308, making Pow10(p) = 0
         d = FastPath(d, -308);
         d = FastPath(d, p + 308);
-    }
-    else
+    } else {
         d = FastPath(d, p);
+    }
     return d;
 }
 
@@ -65,8 +65,7 @@ inline int CheckWithinHalfULP(double b, const BigInteger& d, int dExp) {
     if (dExp >= 0) {
         dS_Exp2 += dExp;
         dS_Exp5 += dExp;
-    }
-    else {
+    } else {
         bS_Exp2 -= dExp;
         bS_Exp5 -= dExp;
         hS_Exp2 -= dExp;
@@ -74,17 +73,17 @@ inline int CheckWithinHalfULP(double b, const BigInteger& d, int dExp) {
     }
 
     // Adjust for binary exponent
-    if (bExp >= 0)
+    if (bExp >= 0) {
         bS_Exp2 += bExp;
-    else {
+    } else {
         dS_Exp2 -= bExp;
         hS_Exp2 -= bExp;
     }
 
     // Adjust for half ulp exponent
-    if (hExp >= 0)
+    if (hExp >= 0) {
         hS_Exp2 += hExp;
-    else {
+    } else {
         dS_Exp2 -= hExp;
         bS_Exp2 -= hExp;
     }
@@ -119,12 +118,12 @@ inline bool StrtodFast(double d, int p, double* result) {
         p = 22;
     }
 
-    if (p >= -22 && p <= 22 && d <= 9007199254740991.0) { // 2^53 - 1
+    if (p >= -22 && p <= 22 && d <= 9007199254740991.0) {  // 2^53 - 1
         *result = FastPath(d, p);
         return true;
-    }
-    else
+    } else {
         return false;
+    }
 }
 
 // Compute an approximation and see if it is within 1/2 ULP
@@ -138,7 +137,7 @@ inline bool StrtodDiyFp(const char* decimals, int dLen, int dExp, double* result
         significand = significand * 10u + static_cast<unsigned>(decimals[i] - '0');
     }
 
-    if (i < dLen && decimals[i] >= '5') // Rounding
+    if (i < dLen && decimals[i] >= '5')  // Rounding
         significand++;
 
     int remaining = dLen - i;
@@ -202,7 +201,8 @@ inline bool StrtodDiyFp(const char* decimals, int dLen, int dExp, double* result
 
     *result = rounded.ToDouble();
 
-    return halfWay - static_cast<unsigned>(error) >= precisionBits || precisionBits >= halfWay + static_cast<unsigned>(error);
+    return halfWay - static_cast<unsigned>(error) >= precisionBits ||
+             precisionBits >= halfWay + static_cast<unsigned>(error);
 }
 
 inline double StrtodBigInteger(double approx, const char* decimals, int dLen, int dExp) {
@@ -210,9 +210,9 @@ inline double StrtodBigInteger(double approx, const char* decimals, int dLen, in
     const BigInteger dInt(decimals, static_cast<unsigned>(dLen));
     Double a(approx);
     int cmp = CheckWithinHalfULP(a.Value(), dInt, dExp);
-    if (cmp < 0)
+    if (cmp < 0) {
         return a.Value();  //  within half ULP
-    else if (cmp == 0) {
+    } else if (cmp == 0) {
         //  Round towards even
         if (a.Significand() & 1)
             return a.NextPositiveDouble();
@@ -223,7 +223,8 @@ inline double StrtodBigInteger(double approx, const char* decimals, int dLen, in
     }
 }
 
-inline double StrtodFullPrecision(double d, int p, const char* decimals, size_t length, size_t decimalPosition, int exp) {
+inline double StrtodFullPrecision(double d, int p, const char* decimals, size_t length,
+         size_t decimalPosition, int exp) {
     RAPIDJSON_ASSERT(d >= 0.0);
     RAPIDJSON_ASSERT(length >= 1);
 
@@ -287,4 +288,4 @@ inline double StrtodFullPrecision(double d, int p, const char* decimals, size_t 
 }   // namespace internal
 RAPIDJSON_NAMESPACE_END
 
-#endif   // RAPIDJSON_STRTOD_
+#endif   // RAPIDJSON_INTERNAL_STRTOD_H_

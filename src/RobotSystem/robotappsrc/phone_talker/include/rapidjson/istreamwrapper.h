@@ -14,17 +14,17 @@
 
 #ifndef RAPIDJSON_ISTREAMWRAPPER_H_
 #define RAPIDJSON_ISTREAMWRAPPER_H_
-
-#include "stream.h"
 #include <iosfwd>
 #include <ios>
+#include "stream.h"
+
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH
 RAPIDJSON_DIAG_OFF(padded)
 #elif defined(_MSC_VER)
 RAPIDJSON_DIAG_PUSH
-RAPIDJSON_DIAG_OFF(4351) // new behavior: elements of array 'array' will be default initialized
+RAPIDJSON_DIAG_OFF(4351)  // new behavior: elements of array 'array' will be default initialized
 #endif
 
 RAPIDJSON_NAMESPACE_BEGIN
@@ -54,7 +54,8 @@ public:
     /*!
         \param stream stream opened for read.
     */
-    BasicIStreamWrapper(StreamType &stream) : stream_(stream), buffer_(peekBuffer_), bufferSize_(4), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) { 
+    explicit BasicIStreamWrapper(StreamType &stream) : stream_(stream), buffer_(peekBuffer_),
+             bufferSize_(4), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) {
         Read();
     }
 
@@ -64,7 +65,8 @@ public:
         \param buffer user-supplied buffer.
         \param bufferSize size of buffer in bytes. Must >=4 bytes.
     */
-    BasicIStreamWrapper(StreamType &stream, char* buffer, size_t bufferSize) : stream_(stream), buffer_(buffer), bufferSize_(bufferSize), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) { 
+    BasicIStreamWrapper(StreamType &stream, char* buffer, size_t bufferSize) : stream_(stream), buffer_(buffer),
+            bufferSize_(bufferSize), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) {
         RAPIDJSON_ASSERT(bufferSize >= 4);
         Read();
     }
@@ -90,9 +92,9 @@ private:
     BasicIStreamWrapper& operator=(const BasicIStreamWrapper&);
 
     void Read() {
-        if (current_ < bufferLast_)
+        if (current_ < bufferLast_) {
             ++current_;
-        else if (!eof_) {
+        } else if (!eof_) {
             count_ += readCount_;
             readCount_ = bufferSize_;
             bufferLast_ = buffer_ + readCount_ - 1;

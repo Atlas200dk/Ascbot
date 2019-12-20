@@ -12,11 +12,13 @@
 
 namespace ascend {
 namespace ascendstream {
+#define FRAME_WIDTH     1920
+#define FRAME_HEIGHT    1080
 
 #if USE_AI
 hi::HiRoadFollowing roadDetector;
 hi::HiCollisionAvoidance caDetector;
-hi::HiObjectFollowing objectDetector;
+// hi::HiObjectFollowing objectDetector;
 hi::HiRoadObjectFollowing roadObjectDetector;
 RoadFllowing  s_rf;
 ShmMotorServer  motor;
@@ -50,7 +52,7 @@ StreamProcess::~StreamProcess() {
 #if USE_AI
   roadDetector.deInit();
   caDetector.deInit();
-  objectDetector.deInit();
+  // objectDetector.deInit();
   roadObjectDetector.deInit();
 
   pthread_join(s_control.tp.thread_id, nullptr);
@@ -244,6 +246,25 @@ bool StreamProcess::DrawBox(unsigned char * image_buffer ) {
       return true;
 }
 
+float cal_object_following_angle(const std::vector<hi::RoadObjectData>& results) {
+    for (int i = 0; i < results.size(); i++) {
+        const hi::RoadObjectData& object = results.at(i);
+        // xxx is object lable id, such as box is "2", bottle is "5"
+        if (object.lable == 5 && object.confidence > 0.5f) {
+            float center_x = object.x + object.width / 2;
+            float center_y = object.y + object.height / 2;
+            double atanx = (center_x - FRAME_WIDTH / 2) / (FRAME_HEIGHT - center_y);
+            float angle = atan(atanx) * 180 / M_PI;
+            return angle;
+        }
+        else{
+          float angle=1000;
+          return angle;
+        }
+
+    }
+}
+
 struct timespec result_time = { 0, 0 };
 int OnResultRoadFollowing(const std::vector<hi::RFData>& results) {
   // std::cout << "######OnResultRoadFollowing" << std::endl;
@@ -313,9 +334,9 @@ int OnResultObjectFollowing(const std::vector<hi::ObjectData>& results) {
       }
     }
 
-    if (motor.init_status == true) {
-      motor.GetMotorStatus()->objectDetectionChange = 1;
-    }
+    // if (motor.init_status == true) {
+    //   motor.GetMotorStatus()->objectDetectionChange = 1;
+    // }
 
     return 0;
 }
@@ -392,6 +413,12 @@ int OnResultRoadObjectFollowing(const std::vector<hi::RoadObjectData>& results) 
           }          
         }
     }
+    
+    if (motor.GetMotorStatus()->objectDetectionSwitch == 1) {
+      float angle = cal_object_following_angle(results);
+      motor.GetMotorStatus()->objectDetectionChange = angle;
+    }
+
 
     if (motor.init_status == true) {
       motor.GetMotorStatus()->roadObjectDetectionChange = 1;
@@ -523,8 +550,8 @@ int StreamProcess::StreamInit(int argc, char *argv[]) {
   caDetector.init("/home/HwHiAiUser/HIAI_PROJECTS/ascend_workspace/cameraservice/collision_avoidance_graph.config");
   caDetector.setCallbackFunction(OnResultCollisionAvoidance);
 
-  objectDetector.init("/home/HwHiAiUser/HIAI_PROJECTS/ascend_workspace/cameraservice/object_following_graph.config");
-  objectDetector.setCallbackFunction(OnResultObjectFollowing);
+  // objectDetector.init("/home/HwHiAiUser/HIAI_PROJECTS/ascend_workspace/cameraservice/object_following_graph.config");
+  // objectDetector.setCallbackFunction(OnResultObjectFollowing);
 
   roadObjectDetector.init("/home/HwHiAiUser/HIAI_PROJECTS/ascend_workspace"
                           "/cameraservice/road_object_following_graph.config");
@@ -596,9 +623,9 @@ int StreamProcess::StreamRun() {
       caDetector.predict(image);
     }
 
-    if (motor.GetMotorStatus()->objectDetectionSwitch == 1) {
-      objectDetector.predict(image);
-    }
+    // if (motor.GetMotorStatus()->objectDetectionSwitch == 1) {
+    //   objectDetector.predict(image);
+    // }
 
     if (motor.GetMotorStatus()->roadobjectDetectionSwitch == 1) {
       roadObjectDetector.predict(image);
@@ -628,10 +655,10 @@ int StreamProcess::StreamRun() {
 
     printf("[%s] result rf to draw time %ld Millisecond, draw run time %ld microseconds  \n", __func__, running_time, draw_time); 
 
-    if (motor.GetMotorStatus()->objectDetectionChange == 1) {
-      DrawBox(s_control.camera_set.p_data);
-      motor.GetMotorStatus()->objectDetectionChange = 0;
-    }
+    // if (motor.GetMotorStatus()->objectDetectionChange == 1) {
+    //   DrawBox(s_control.camera_set.p_data);
+    //   motor.GetMotorStatus()->objectDetectionChange = 0;
+    // }
 
     if (motor.GetMotorStatus()->roadObjectDetectionChange == 1) {
       DrawBox(s_control.camera_set.p_data);

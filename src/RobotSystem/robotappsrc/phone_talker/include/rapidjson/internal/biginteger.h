@@ -1,5 +1,5 @@
 // Tencent is pleased to support the open source community by making RapidJSON available.
-// 
+//
 // Copyright (C) 2015 THL A29 Limited, a Tencent company, and Milo Yip. All rights reserved.
 //
 // Licensed under the MIT License (the "License"); you may not use this file except
@@ -7,9 +7,9 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
 #ifndef RAPIDJSON_BIGINTEGER_H_
@@ -18,7 +18,7 @@
 #include "../rapidjson.h"
 
 #if defined(_MSC_VER) && !__INTEL_COMPILER && defined(_M_AMD64)
-#include <intrin.h> // for _umul128
+#include <intrin.h>  // for _umul128
 #pragma intrinsic(_umul128)
 #endif
 
@@ -52,15 +52,13 @@ public:
             AppendDecimal64(decimals + i, decimals + i + length);
     }
 
-    BigInteger& operator=(const BigInteger &rhs)
-    {
+    BigInteger& operator=(const BigInteger &rhs) {
         if (this != &rhs) {
             count_ = rhs.count_;
             std::memcpy(digits_, rhs.digits_, count_ * sizeof(Type));
         }
         return *this;
     }
-    
     BigInteger& operator=(uint64_t u) {
         digits_[0] = u;
         count_ = 1;
@@ -72,7 +70,7 @@ public:
         digits_[0] += u;
         for (size_t i = 0; i < count_ - 1; i++) {
             if (digits_[i] >= backup)
-                return *this; // no carry
+                return *this;   // no carry
             backup = digits_[i + 1];
             digits_[i + 1] += 1;
         }
@@ -135,8 +133,7 @@ public:
         if (interShift == 0) {
             std::memmove(digits_ + offset, digits_, count_ * sizeof(Type));
             count_ += offset;
-        }
-        else {
+        } else {
             digits_[count_] = 0;
             for (size_t i = count_; i > 0; i--)
                 digits_[i + offset] = (digits_[i] << interShift) | (digits_[i - 1] >> (kTypeBit - interShift));
@@ -188,8 +185,8 @@ public:
         RAPIDJSON_ASSERT(cmp != 0);
         const BigInteger *a, *b;  // Makes a > b
         bool ret;
-        if (cmp < 0) { a = &rhs; b = this; ret = true; }
-        else         { a = this; b = &rhs; ret = false; }
+        if (cmp < 0) { a = &rhs; b = this; ret = true;
+        } else { a = this; b = &rhs; ret = false; }
 
         Type borrow = 0;
         for (size_t i = 0; i < a->count_; i++) {
@@ -223,9 +220,9 @@ public:
 private:
     void AppendDecimal64(const char* begin, const char* end) {
         uint64_t u = ParseUint64(begin, end);
-        if (IsZero())
+        if (IsZero()) {
             *this = u;
-        else {
+        } else {
             unsigned exp = static_cast<unsigned>(end - begin);
             (MultiplyPow5(exp) <<= exp) += u;   // *this = *this * 10^exp + u
         }
@@ -252,7 +249,7 @@ private:
         if (low < k)
             (*outHigh)++;
         return low;
-#elif (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__x86_64__)
+#elif(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__x86_64__)
         __extension__ typedef unsigned __int128 uint128;
         uint128 p = static_cast<uint128>(a) * static_cast<uint128>(b);
         p += k;

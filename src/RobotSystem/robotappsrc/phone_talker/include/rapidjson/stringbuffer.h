@@ -16,7 +16,6 @@
 #define RAPIDJSON_STRINGBUFFER_H_
 
 #include "stream.h"
-#include "internal/stack.h"
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
 #include <utility>  // std::move
@@ -42,7 +41,8 @@ class GenericStringBuffer {
 public:
     typedef typename Encoding::Ch Ch;
 
-    GenericStringBuffer(Allocator* allocator = 0, size_t capacity = kDefaultCapacity) : stack_(allocator, capacity) {}
+    explicit GenericStringBuffer(Allocator* allocator = 0, size_t capacity = \
+            kDefaultCapacity) : stack_(allocator, capacity) {}
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
     GenericStringBuffer(GenericStringBuffer&& rhs) : stack_(std::move(rhs.stack_)) {}

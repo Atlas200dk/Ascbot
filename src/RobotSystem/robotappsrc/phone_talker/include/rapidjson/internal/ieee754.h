@@ -12,8 +12,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef RAPIDJSON_IEEE754_
-#define RAPIDJSON_IEEE754_
+#ifndef RAPIDJSON_INTERNAL_IEEE754_H_
+#define RAPIDJSON_INTERNAL_IEEE754_H_
 
 #include "../rapidjson.h"
 
@@ -23,8 +23,8 @@ namespace internal {
 class Double {
 public:
     Double() {}
-    Double(double d) : d_(d) {}
-    Double(uint64_t u) : u_(u) {}
+    explicit Double(double d) : d_(d) {}
+    explicit Double(uint64_t u) : u_(u) {}
 
     double Value() const { return d_; }
     uint64_t Uint64Value() const { return u_; }
@@ -75,4 +75,4 @@ private:
 }    // namespace internal
 RAPIDJSON_NAMESPACE_END
 
-#endif    // RAPIDJSON_IEEE754_
+#endif    // RAPIDJSON_INTERNAL_IEEE754_H_

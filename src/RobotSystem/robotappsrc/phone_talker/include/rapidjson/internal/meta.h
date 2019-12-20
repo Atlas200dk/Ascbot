@@ -31,7 +31,7 @@ RAPIDJSON_DIAG_OFF(6334)
 #include <type_traits>
 #endif
 
-//@cond RAPIDJSON_INTERNAL
+// @cond RAPIDJSON_INTERNAL
 RAPIDJSON_NAMESPACE_BEGIN
 namespace internal {
 
@@ -55,7 +55,7 @@ typedef BoolType<false> FalseType;
 
 template <bool C> struct SelectIfImpl { template <typename T1, typename T2> struct Apply { typedef T1 Type; }; };
 template <> struct SelectIfImpl<false> { template <typename T1, typename T2> struct Apply { typedef T2 Type; }; };
-template <bool C, typename T1, typename T2> struct SelectIfCond : SelectIfImpl<C>::template Apply<T1,T2> {};
+template <bool C, typename T1, typename T2> struct SelectIfCond : SelectIfImpl<C>::template Apply<T1, T2> {};
 template <typename C, typename T1, typename T2> struct SelectIf : SelectIfCond<C::Value, T1, T2> {};
 
 template <bool Cond1, bool Cond2> struct AndExprCond : FalseType {};
@@ -63,8 +63,8 @@ template <> struct AndExprCond<true, true> : TrueType {};
 template <bool Cond1, bool Cond2> struct OrExprCond : TrueType {};
 template <> struct OrExprCond<false, false> : FalseType {};
 
-template <typename C> struct BoolExpr : SelectIf<C,TrueType,FalseType>::Type {};
-template <typename C> struct NotExpr  : SelectIf<C,FalseType,TrueType>::Type {};
+template <typename C> struct BoolExpr : SelectIf<C, TrueType, FalseType>::Type {};
+template <typename C> struct NotExpr  : SelectIf<C, FalseType, TrueType>::Type {};
 template <typename C1, typename C2> struct AndExpr : AndExprCond<C1::Value, C2::Value>::Type {};
 template <typename C1, typename C2> struct OrExpr  : OrExprCond<C1::Value, C2::Value>::Type {};
 
@@ -100,9 +100,9 @@ template <typename T> struct IsPointer<T*> : TrueType {};
 #if RAPIDJSON_HAS_CXX11_TYPETRAITS
 
 template <typename B, typename D> struct IsBaseOf
-    : BoolType< ::std::is_base_of<B,D>::value> {};
+    : BoolType< ::std::is_base_of<B, D>::value> {};
 
-#else // simplified version adopted from Boost
+#else  // simplified version adopted from Boost
 
 template<typename B, typename D> struct IsBaseOfImpl {
     RAPIDJSON_STATIC_ASSERT(sizeof(B) != 0);
@@ -126,7 +126,7 @@ template<typename B, typename D> struct IsBaseOfImpl {
 template <typename B, typename D> struct IsBaseOf
     : OrExpr<IsSame<B, D>, BoolExpr<IsBaseOfImpl<B, D> > >::Type {};
 
-#endif // RAPIDJSON_HAS_CXX11_TYPETRAITS
+#endif  // RAPIDJSON_HAS_CXX11_TYPETRAITS
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -161,19 +161,19 @@ template <typename T> struct RemoveSfinaeTag<SfinaeTag&(*)(T)> { typedef T Type;
     typename ::RAPIDJSON_NAMESPACE::internal::DisableIf \
         <RAPIDJSON_REMOVEFPTR_(cond)>::Type * = NULL
 
-#define RAPIDJSON_ENABLEIF_RETURN(cond,returntype) \
+#define RAPIDJSON_ENABLEIF_RETURN(cond, returntype) \
     typename ::RAPIDJSON_NAMESPACE::internal::EnableIf \
         <RAPIDJSON_REMOVEFPTR_(cond), \
          RAPIDJSON_REMOVEFPTR_(returntype)>::Type
 
-#define RAPIDJSON_DISABLEIF_RETURN(cond,returntype) \
+#define RAPIDJSON_DISABLEIF_RETURN(cond, returntype) \
     typename ::RAPIDJSON_NAMESPACE::internal::DisableIf \
         <RAPIDJSON_REMOVEFPTR_(cond), \
          RAPIDJSON_REMOVEFPTR_(returntype)>::Type
 
-} // namespace internal
+}  // namespace internal
 RAPIDJSON_NAMESPACE_END
-//@endcond
+// @endcond
 
 #if defined(_MSC_VER) && !defined(__clang__)
 RAPIDJSON_DIAG_POP
@@ -183,4 +183,4 @@ RAPIDJSON_DIAG_POP
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_INTERNAL_META_H_
+#endif  // _RAPIDJSON_INTERNAL_META_H_

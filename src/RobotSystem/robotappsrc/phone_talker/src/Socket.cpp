@@ -20,7 +20,7 @@ namespace netLink {
 #ifdef WINVER
 void init() {
     WSADATA wsaData;
-    if(WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
+    if (WSAStartup(MAKEWORD(2, 0), &wsaData) != 0)
         throw Exception(Exception::ERROR_INIT);
 }
 #define snprintf _snprintf_s
@@ -46,7 +46,7 @@ Socket::AddrinfoContainer Socket::getSocketInfoFor(const char* host, unsigned in
     struct addrinfo conf, *res;
     memset(&conf, 0, sizeof(conf));
     conf.ai_flags = AI_V4MAPPED;
-    switch(ipVersion) {
+    switch (ipVersion) {
         case IPv4:
             conf.ai_family = AF_INET;
             break;
@@ -72,25 +72,25 @@ Socket::AddrinfoContainer Socket::getSocketInfoFor(const char* host, unsigned in
             throw Exception(Exception::BAD_PROTOCOL);
     }
     char portStr[10];
-    snprintf(portStr, 10, "%u", port);
+    snprintf(portStr, sizeof(portStr), "%u", port);
     int result = getaddrinfo(host, portStr, &conf, &res);
-    if(result != 0)
+    if (result != 0)
         throw Exception(Exception::ERROR_RESOLVING_ADDRESS);
     return AddrinfoContainer(res);
 }
 
 Socket::pos_type Socket::seekoff(Socket::off_type off, std::ios_base::seekdir way, std::ios_base::openmode which) {
-    switch(way) {
+    switch (way) {
         case std::ios_base::beg:
             if (off < 0)
                 break;
             if (which & std::ios_base::in) {
-                if(eback() + off >= egptr())
+                if (eback() + off >= egptr())
                     break;
                 setg(eback(), eback()+off, egptr());
             }
             if (which & std::ios_base::out) {
-                if(pbase() + off >= epptr())
+                if (pbase() + off >= epptr())
                     break;
                 setp(pbase(), epptr());
                 pbump(off);
@@ -103,14 +103,15 @@ Socket::pos_type Socket::seekoff(Socket::off_type off, std::ios_base::seekdir wa
                 setg(eback(), gptr()+off, egptr());
                 return gptr()-eback();
             } else if (which == std::ios_base::out) {
-                if(pbase() + off >= epptr() || epptr() + off < pbase())
+                if (pbase() + off >= epptr() || epptr() + off < pbase())
                     break;
                 pbump(off);
                 return pptr()-pbase();
-            } else
+            } else {
                 break;
+            }
         case std::ios_base::end:
-            if(off > 0)
+            if (off > 0)
                 break;
             if  (which == std::ios_base::in) {
                 if (egptr() + off < eback())
@@ -118,13 +119,14 @@ Socket::pos_type Socket::seekoff(Socket::off_type off, std::ios_base::seekdir wa
                 setg(eback(), egptr()+off, egptr());
                 return gptr()-eback();
             } else if (which == std::ios_base::out) {
-                if(epptr() + off < pbase())
+                if (epptr() + off < pbase())
                     break;
                 setp(pbase(), epptr());
                 pbump(off);
                 return pptr()-pbase();
-            } else
+            } else {
                 break;
+            }
     }
     return EOF;
 }
@@ -189,11 +191,11 @@ Socket::int_type Socket::overflow(int_type c) {
 
 void Socket::initSocket(bool blockingConnect) {
     AddrinfoContainer info;
-    if (type == TCP_CLIENT)
+    if (type == TCP_CLIENT) {
         info = getSocketInfoFor(hostRemote.c_str(), portRemote, false);
-    else {
+    } else {
         const char* host;
-        if(!hostLocal.compare("") || !hostLocal.compare("*"))
+        if (!hostLocal.compare("") || !hostLocal.compare("*"))
             host = NULL;
         else
             host = hostLocal.c_str();
@@ -230,7 +232,8 @@ void Socket::initSocket(bool blockingConnect) {
         }
         if (ipVersion == IPv6) {
             int flag = 0;
-            if(setsockopt(handle, IPPROTO_IPV6, IPV6_V6ONLY, reinterpret_cast<const char*>(&flag), sizeof(flag)) == -1) {
+            if (setsockopt(handle, IPPROTO_IPV6, IPV6_V6ONLY, reinterpret_cast<const char*>(&flag), \
+                    sizeof(flag)) == -1) {
                 disconnect();
                 throw Exception(Exception::ERROR_SET_SOCK_OPT);
             }
@@ -333,7 +336,7 @@ Socket::Type Socket::getType() const {
 }
 
 Socket::Status Socket::getStatus() const {
-    if(type == TCP_SERVER)
+    if (type == TCP_SERVER)
         return (status == NOT_CONNECTED) ? NOT_CONNECTED : LISTENING;
     else
         return (Socket::Status)status;
@@ -341,32 +344,32 @@ Socket::Status Socket::getStatus() const {
 
 std::streamsize Socket::showmanyc() {
     #ifdef WINVER
-    unsigned long result = 0;
-    if(ioctlsocket(handle, FIONREAD, &result)) {
+    uint64 result = 0;
+    if (ioctlsocket(handle, FIONREAD, &result)) {
     #else
     int result = 0;
     if (ioctl(handle, FIONREAD, &result)) {
     #endif
         disconnect();
         throw Exception(Exception::ERROR_IOCTL);
-    } else
+    } else {
         return result;
+    }
 }
 
 std::streamsize Socket::advanceInputBuffer() {
     if (getInputBufferSize() == 0)  // No input buffer
         return 0;
     std::streamsize inAvail;
-    if (type == UDP_PEER)
+    if (type == UDP_PEER) {
         inAvail = 0;
-    else {
+    } else {
         inAvail = egptr()-gptr();
         memmove(eback(), gptr(), inAvail);
     }
     try {
         inAvail += receive(eback()+inAvail, getInputBufferSize()-inAvail);
     } catch (Exception err) {
-
     }
     setg(eback(), eback(), eback()+inAvail);
     return inAvail;
@@ -375,7 +378,7 @@ std::streamsize Socket::advanceInputBuffer() {
 std::streamsize Socket::receive(char_type* buffer, std::streamsize size) {
     if  (type == TCP_SERVER)
         throw Exception(Exception::BAD_TYPE);
-    if(status != Socket::Status::READY && status != Socket::Status::BUSY)
+    if (status != Socket::Status::READY && status != Socket::Status::BUSY)
         return 0;
     size = std::min(size, showmanyc());
     if (size == 0)
@@ -388,18 +391,21 @@ std::streamsize Socket::receive(char_type* buffer, std::streamsize size) {
             #else
             unsigned int addrSize = sizeof(remoteAddr);
             #endif
-            int result = recvfrom(handle, (char*)buffer, size, 0, reinterpret_cast<struct sockaddr*>(&remoteAddr), &addrSize);
+            int result = recvfrom(handle, reinterpret_cast<char*>(buffer), size, 0, \
+                    reinterpret_cast<struct sockaddr*>(&remoteAddr), \
+                    &addrSize);
             if (result <= 0) {
                 portRemote = 0;
                 hostRemote = "";
                 throw Exception(Exception::ERROR_READ);
-            } else
+            } else {
                 readSockaddr(&remoteAddr, hostRemote, portRemote);
+            }
             return result;
         }
         case TCP_CLIENT:
         case TCP_SERVERS_CLIENT: {
-            int result = recv(handle, (char*)buffer, size, 0);
+            int result = recv(handle, reinterpret_cast<char*>(buffer), size, 0);
             if (result <= 0)
                 throw Exception(Exception::ERROR_READ);
             return result;
@@ -412,16 +418,17 @@ std::streamsize Socket::receive(char_type* buffer, std::streamsize size) {
 }
 
 std::streamsize Socket::send(const char_type* buffer, std::streamsize size) {
-    if(type == TCP_SERVER)
+    if (type == TCP_SERVER)
         throw Exception(Exception::BAD_TYPE);
-    if(status != Socket::Status::READY || size == 0)
+    if (status != Socket::Status::READY || size == 0)
         return 0;
-    switch(type) {
+    switch (type) {
         case UDP_PEER: {
             AddrinfoContainer info = getSocketInfoFor(hostRemote.c_str(), portRemote, false);
             size_t sentBytes = 0;
             while (sentBytes < (size_t)size) {
-                int result = ::sendto(handle, (const char*)buffer + sentBytes, size - sentBytes, 0, info->ai_addr, info->ai_addrlen);
+                int result = ::sendto(handle, (const char*)buffer + sentBytes, size - sentBytes, \
+                        0, info->ai_addr, info->ai_addrlen);
                 if (result <= 0) {
                     status = BUSY;
                     throw Exception(Exception::ERROR_SEND);
@@ -491,13 +498,14 @@ void Socket::setOutputBufferSize(std::streamsize n) {
     if (type != TCP_SERVER && n > 0) {
         char_type* writeBuffer = new char_type[n];
         setp(writeBuffer, writeBuffer+n);
-    } else
+    } else {
         setp(NULL, NULL);
+    }
 }
 
 void Socket::setBlockingMode(bool blocking) {
     #ifdef WINVER
-    unsigned long flag = !blocking;
+    uint64 flag = !blocking;
     if (ioctlsocket(handle, FIONBIO, &flag) != 0)
     #else
     int flags = fcntl(handle, F_GETFL);
@@ -533,7 +541,8 @@ void Socket::setMulticastGroup(const std::string& address, bool join) {
             struct ip_mreq mreq;
             mreq.imr_multiaddr = sin;
             mreq.imr_interface.s_addr = 0;
-            if (setsockopt(handle, IPPROTO_IP, (join) ? IP_ADD_MEMBERSHIP : IP_DROP_MEMBERSHIP, reinterpret_cast<const char*>(&mreq), sizeof(mreq)) == -1)
+            if (setsockopt(handle, IPPROTO_IP, (join) ? IP_ADD_MEMBERSHIP : IP_DROP_MEMBERSHIP, \
+                    reinterpret_cast<const char*>(&mreq), sizeof(mreq)) == -1)
                 throw Exception(Exception::ERROR_SET_SOCK_OPT);
         }
     } else {
@@ -544,7 +553,8 @@ void Socket::setMulticastGroup(const std::string& address, bool join) {
             struct ipv6_mreq mreq;
             mreq.ipv6mr_multiaddr = sin;
             mreq.ipv6mr_interface = 0;
-            if (setsockopt(handle, IPPROTO_IPV6, (join) ? IPV6_JOIN_GROUP : IPV6_LEAVE_GROUP, reinterpret_cast<const char*>(&mreq), sizeof(ipv6_mreq)) == -1)
+            if (setsockopt(handle, IPPROTO_IPV6, (join) ? IPV6_JOIN_GROUP : IPV6_LEAVE_GROUP, \
+                    reinterpret_cast<const char*>(&mreq), sizeof(ipv6_mreq)) == -1)
                 throw Exception(Exception::ERROR_SET_SOCK_OPT);
         }
     }
@@ -603,5 +613,4 @@ void Socket::disconnectOnError() {
     if (error != 0)
         disconnect();
 }
-
-};
+}  // namespace netLink

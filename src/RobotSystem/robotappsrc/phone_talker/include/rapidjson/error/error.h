@@ -48,8 +48,8 @@ RAPIDJSON_DIAG_OFF(padded)
     On Windows, user can define this macro as \c _T(x) for supporting both
     unicode/non-unicode settings.
 */
-#ifndef RAPIDJSON_ERROR_STRING
-#define RAPIDJSON_ERROR_STRING(x) x
+#ifndef _RAPIDJSON_ERROR_STRING
+#define _RAPIDJSON_ERROR_STRING(x) x
 #endif
 
 RAPIDJSON_NAMESPACE_BEGIN
@@ -106,6 +106,7 @@ enum ParseErrorCode {
 struct ParseResult {
     //!! Unspecified boolean type
     typedef bool (ParseResult::*BooleanType)() const;
+
 public:
     //! Default constructor, no error.
     ParseResult() : code_(kParseErrorNone), offset_(0) {}
@@ -158,4 +159,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_ERROR_ERROR_H_
+#endif  // _RAPIDJSON_ERROR_ERROR_H_

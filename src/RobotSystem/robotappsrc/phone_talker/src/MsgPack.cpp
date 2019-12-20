@@ -143,8 +143,9 @@ namespace MsgPack {
         return 1;
     }
 
-    std::streamsize Primitive::serialize(int64_t& pos, std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
-        if(bytes > 0 && pos == 0 && streamBuffer->sputc(type) != std::streambuf::traits_type::eof())
+    std::streamsize Primitive::serialize(int64_t& pos, \
+            std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
+        if (bytes > 0 && pos == 0 && streamBuffer->sputc(type) != std::streambuf::traits_type::eof())
             return ++pos;
         else
             return 0;
@@ -159,7 +160,7 @@ namespace MsgPack {
     }
 
     void Primitive::toJSON(std::ostream& stream) const {
-        switch(type) {
+        switch (type) {
             case Type::NIL:
                 stream << "null";
             return;
@@ -199,23 +200,25 @@ namespace MsgPack {
     }
 
     std::streamsize Header::serialize(int64_t& pos, std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
-        if(pos < 0) {
+        if (pos < 0) {
             bytes = std::min(bytes, (std::streamsize)(-pos));
             bytes = streamBuffer->sputn(header+getHeaderLength()+pos, bytes);
             pos += bytes;
             return bytes;
-        } else
+        } else {
             return 0;
+        }
     }
 
     std::streamsize Header::deserialize(int64_t& pos, std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
-        if(pos < 0) {
+        if (pos < 0) {
             bytes = std::min(bytes, (std::streamsize)(-pos));
             bytes = streamBuffer->sgetn(header+getHeaderLength()+pos, bytes);
             pos += bytes;
             return bytes;
-        } else
+        } else {
             return 0;
+        }
     }
 
     int64_t Header::getEndPos() const {
@@ -224,9 +227,9 @@ namespace MsgPack {
 
     Type Header::getType() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type < FIXARRAY) return FIXMAP;
-        if(type < FIXSTR) return FIXARRAY;
-        if(type < NIL) return FIXSTR;
+        if (type < FIXARRAY) return FIXMAP;
+        if (type < FIXSTR) return FIXARRAY;
+        if (type < NIL) return FIXSTR;
         return static_cast<Type>(type);
     }
 
@@ -243,7 +246,7 @@ namespace MsgPack {
     std::streamsize Data::serialize(int64_t& pos, std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
         std::streamsize bytesDone = Header::serialize(pos, streamBuffer, bytes);
 
-        if(pos >= 0 && data) {
+        if (pos >= 0 && data) {
             bytes = std::min(bytes, (std::streamsize)(getEndPos()-pos));
             bytes = streamBuffer->sputn(data.get()+pos, bytes);
             pos += bytes;
@@ -256,10 +259,10 @@ namespace MsgPack {
     std::streamsize Data::deserialize(int64_t& pos, std::basic_streambuf<char>* streamBuffer, std::streamsize bytes) {
         std::streamsize bytesDone = Header::deserialize(pos, streamBuffer, bytes);
 
-        if(pos >= 0) {
+        if (pos >= 0) {
             int64_t dataLen = getEndPos();
-            if(dataLen > 0) {
-                if(!data)
+            if (dataLen > 0) {
+                if (!data)
                     data.reset(new char[dataLen]);
 
                 bytes = std::min(bytes, (std::streamsize)(dataLen-pos));
@@ -275,15 +278,15 @@ namespace MsgPack {
 
 
     Binary::Binary(uint32_t len, const void* _data) {
-        if(len > 0) {
+        if (len > 0) {
             data.reset(new char[len]);
             memcpy(data.get(), _data, len);
         }
 
-        if(len <= 0xFF) {
+        if (len <= 0xFF) {
             header[0] = Type::BIN_8;
             storeUint8(&header[1], len);
-        } else if(len <= 0xFFFF) {
+        } else if (len <= 0xFFFF) {
             header[0] = Type::BIN_16;
             storeUint16(&header[1], len);
         } else {
@@ -294,7 +297,7 @@ namespace MsgPack {
 
     int64_t Binary::getEndPos() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        switch(type) {
+        switch (type) {
             case Type::BIN_8:
                 return loadUint8(&header[1]);
             case Type::BIN_16:
@@ -308,7 +311,7 @@ namespace MsgPack {
 
     int64_t Binary::getHeaderLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        switch(type) {
+        switch (type) {
             case Type::BIN_8:
                 return 2;
             case Type::BIN_16:
@@ -330,7 +333,7 @@ namespace MsgPack {
     void Binary::toJSON(std::ostream& stream) const {
         auto len = getLength();
         stream << "< Buffer length=" << len << " data: ";
-        for(uint32_t i = 0; i < len; ++i)
+        for (uint32_t i = 0; i < len; ++i)
             stream << (uint16_t)data[i] << " ";
         stream << ">";
     }
@@ -346,7 +349,7 @@ namespace MsgPack {
         data[0] = type;
         memcpy(&data[1], _data, len);
 
-        switch(len) {
+        switch (len) {
             case 1:
                 header[0] = Type::FIXEXT_8;
             break;
@@ -363,10 +366,10 @@ namespace MsgPack {
                 header[0] = Type::FIXEXT_128;
             break;
             default:
-                if(len <= 0xFF) {
+                if (len <= 0xFF) {
                     header[0] = Type::EXT_8;
                     storeUint8(&header[1], len);
-                } else if(len <= 0xFFFF) {
+                } else if (len <= 0xFFFF) {
                     header[0] = Type::EXT_16;
                     storeUint16(&header[1], len);
                 } else {
@@ -379,7 +382,7 @@ namespace MsgPack {
 
     int64_t Extended::getEndPos() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        switch(type) {
+        switch (type) {
             case Type::FIXEXT_8:
                 return 2;
             case Type::FIXEXT_16:
@@ -403,7 +406,7 @@ namespace MsgPack {
 
     int64_t Extended::getHeaderLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        switch(type) {
+        switch (type) {
             case Type::FIXEXT_8:
             case Type::FIXEXT_16:
             case Type::FIXEXT_32:
@@ -432,7 +435,7 @@ namespace MsgPack {
         auto len = getLength();
         stream << "< Extended type=" << (uint16_t)data[0];
         stream << " length=" << (len-1) << " data: ";
-        for(uint32_t i = 1; i < len; ++i)
+        for (uint32_t i = 1; i < len; ++i)
             stream << (uint16_t)data[i] << " ";
         stream << ">";
     }
@@ -452,17 +455,17 @@ namespace MsgPack {
 
 
     void String::init(uint32_t len, const void* str) {
-        if(len > 0) {
+        if (len > 0) {
             data.reset(new char[len]);
             memcpy(data.get(), str, len);
         }
 
-        if(len < 0x20)
+        if (len < 0x20) {
             header[0] = Type::FIXSTR+len;
-        else if(len <= 0xFF) {
+        } else if (len <= 0xFF) {
             header[0] = Type::STR_8;
             storeUint8(&header[1], len);
-        } else if(len <= 0xFFFF) {
+        } else if (len <= 0xFFFF) {
             header[0] = Type::STR_16;
             storeUint16(&header[1], len);
         } else {
@@ -485,10 +488,10 @@ namespace MsgPack {
 
     int64_t String::getEndPos() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXSTR && type < Type::NIL)
+        if (type >= Type::FIXSTR && type < Type::NIL)
             return type - Type::FIXSTR;
 
-        switch(type) {
+        switch (type) {
             case Type::STR_8:
                 return loadUint8(&header[1]);
             case Type::STR_16:
@@ -502,10 +505,10 @@ namespace MsgPack {
 
     int64_t String::getHeaderLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXSTR && type < Type::NIL)
+        if (type >= Type::FIXSTR && type < Type::NIL)
             return 1;
 
-        switch(type) {
+        switch (type) {
             case Type::STR_8:
                 return 2;
             case Type::STR_16:
@@ -526,7 +529,7 @@ namespace MsgPack {
 
     void String::toJSON(std::ostream& stream) const {
         stream << "\"";
-		stream.write(reinterpret_cast<const char*>(data.get()), getEndPos());
+        stream.write(reinterpret_cast<const char*>(data.get()), getEndPos());
         stream << "\"";
     }
 
@@ -545,19 +548,16 @@ namespace MsgPack {
     std::unique_ptr<Element> Factory(const std::string& str) {
         return std::unique_ptr<Element>(new String(str));
     }
-
-
-
     Number::Number(uint64_t value) {
-        if(value < 0x80ULL)
+        if (value < 0x80ULL) {
             data[0] = value;
-        else if(value <= 0xFFULL) {
+        } else if (value <= 0xFFULL) {
             data[0] = Type::UINT_8;
             storeUint8(data+1, value);
-        } else if(value <= 0xFFFFULL) {
+        } else if (value <= 0xFFFFULL) {
             data[0] = Type::UINT_16;
             storeUint16(data+1, value);
-        } else if(value <= 0xFFFFFFFFULL) {
+        } else if (value <= 0xFFFFFFFFULL) {
             data[0] = Type::UINT_32;
             storeUint32(data+1, value);
         } else {
@@ -567,15 +567,15 @@ namespace MsgPack {
     }
 
     Number::Number(int64_t value) {
-        if(value >= -0x20LL && value < 0x80LL)
+        if (value >= -0x20LL && value < 0x80LL) {
             storeInt8(data, value);
-        else if(value >= -0x80LL && value < 0x80LL) {
+        } else if (value >= -0x80LL && value < 0x80LL) {
             data[0] = Type::INT_8;
             storeInt8(data+1, value);
-        } else if(value >= -0x8000LL && value < 0x8000LL) {
+        } else if (value >= -0x8000LL && value < 0x8000LL) {
             data[0] = Type::INT_16;
             storeInt16(data+1, value);
-        } else if(value >= -0x80000000LL && value < 0x80000000LL) {
+        } else if (value >= -0x80000000LL && value < 0x80000000LL) {
             data[0] = Type::INT_32;
             storeInt32(data+1, value);
         } else {
@@ -615,10 +615,10 @@ namespace MsgPack {
 
     int64_t Number::getEndPos() const {
         uint8_t type = static_cast<const uint8_t>(data[0]);
-        if(type < 0x80 || type >= 0xE0)
+        if (type < 0x80 || type >= 0xE0)
             return 1;
 
-        switch(type) {
+        switch (type) {
             case Type::UINT_8:
             case Type::INT_8:
                 return 2;
@@ -646,12 +646,12 @@ namespace MsgPack {
 
     void Number::toJSON(std::ostream& stream) const {
         uint8_t type = static_cast<const uint8_t>(data[0]);
-        if(type < FIXMAP)
+        if (type < FIXMAP) {
             stream << (int16_t)type;
-        else if(type >= FIXINT)
+        } else if (type >= FIXINT) {
             stream << (int16_t)static_cast<const int8_t>(type);
-        else
-            switch(type) {
+        } else {
+            switch (type) {
                 case Type::FLOAT_32:
                     stream << loadFloat32(data+1);
                 break;
@@ -683,12 +683,13 @@ namespace MsgPack {
                     stream << loadInt64(data+1);
                 break;
             }
+        }
     }
 
     Type Number::getType() const {
         uint8_t type = static_cast<const uint8_t>(data[0]);
-        if(type < FIXMAP) return FIXUINT;
-        if(type >= FIXINT) return FIXINT;
+        if (type < FIXMAP) return FIXUINT;
+        if (type >= FIXINT) return FIXINT;
         return static_cast<Type>(type);
     }
 
@@ -726,9 +727,9 @@ namespace MsgPack {
 
 
     ArrayHeader::ArrayHeader(uint32_t len) {
-        if(len < 0x10)
+        if (len < 0x10) {
             header[0] = Type::FIXARRAY+len;
-        else if(len <= 0xFFFF) {
+        } else if (len <= 0xFFFF) {
             header[0] = Type::ARRAY_16;
             storeUint16(&header[1], len);
         } else {
@@ -739,10 +740,10 @@ namespace MsgPack {
 
     uint32_t ArrayHeader::getLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXARRAY && type < Type::FIXSTR)
+        if (type >= Type::FIXARRAY && type < Type::FIXSTR)
             return type - Type::FIXARRAY;
 
-        switch(type) {
+        switch (type) {
             case Type::ARRAY_16:
                 return loadUint16(&header[1]);
             case Type::ARRAY_32:
@@ -766,10 +767,10 @@ namespace MsgPack {
 
     int64_t ArrayHeader::getHeaderLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXARRAY && type < Type::FIXSTR)
+        if (type >= Type::FIXARRAY && type < Type::FIXSTR)
             return 1;
 
-        switch(type) {
+        switch (type) {
             case Type::ARRAY_16:
                 return 3;
             case Type::ARRAY_32:
@@ -782,9 +783,9 @@ namespace MsgPack {
 
 
     MapHeader::MapHeader(uint32_t len) {
-        if(len < 0x10)
+        if (len < 0x10) {
             header[0] = Type::FIXMAP+len;
-        else if(len <= 0xFFFF) {
+        } else if (len <= 0xFFFF) {
             header[0] = Type::MAP_16;
             storeUint16(&header[1], len);
         } else {
@@ -795,10 +796,10 @@ namespace MsgPack {
 
     int64_t MapHeader::getHeaderLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXMAP && type < Type::FIXARRAY)
+        if (type >= Type::FIXMAP && type < Type::FIXARRAY)
             return 1;
 
-        switch(type) {
+        switch (type) {
             case Type::MAP_16:
                 return 3;
             case Type::MAP_32:
@@ -822,10 +823,10 @@ namespace MsgPack {
 
     uint32_t MapHeader::getLength() const {
         uint8_t type = static_cast<const uint8_t>(header[0]);
-        if(type >= Type::FIXMAP && type < Type::FIXARRAY)
+        if (type >= Type::FIXMAP && type < Type::FIXARRAY)
             return type - Type::FIXMAP;
 
-        switch(type) {
+        switch (type) {
             case Type::MAP_16:
                 return loadUint16(&header[1]);
             case Type::MAP_32:
@@ -834,28 +835,24 @@ namespace MsgPack {
                 return 0;
         }
     }
-
-
-
-	Array::Array(std::vector<std::unique_ptr<Element>>&& _elements)
+    Array::Array(std::vector<std::unique_ptr<Element>>&& _elements)
         : ArrayHeader(_elements.size()), elements(std::move(_elements)) {
-
     }
-
     bool Array::containerDeserialized() {
         uint32_t len = getLength();
-        if(len > 0) {
+        if (len > 0) {
             elements = std::vector<std::unique_ptr<Element>>(len);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     std::unique_ptr<Element> Array::copy() const {
         auto len = getLength();
         std::vector<std::unique_ptr<Element>> _elements;
         _elements.reserve(len);
-        for(const auto& i : elements)
+        for (const auto& i : elements)
             _elements.push_back(std::unique_ptr<Element>(i->copy()));
         return std::unique_ptr<Element>(new Array(std::move(_elements)));
     }
@@ -863,9 +860,9 @@ namespace MsgPack {
     void Array::toJSON(std::ostream& stream) const {
         uint32_t len = elements.size();
         stream << "[";
-        if(len > 0) {
+        if (len > 0) {
             elements[0]->toJSON(stream);
-            for(uint32_t i = 1; i < len; ++i) {
+            for (uint32_t i = 1; i < len; ++i) {
                 stream << ", ";
                 elements[i]->toJSON(stream);
             }
@@ -876,7 +873,7 @@ namespace MsgPack {
     uint32_t Array::getSizeInBytes() const {
         uint32_t size = getHeaderLength(),
                  len = elements.size();
-        for(uint32_t i = 1; i < len; ++i)
+        for (uint32_t i = 1; i < len; ++i)
             size += elements[i]->getSizeInBytes();
         return size;
     }
@@ -889,17 +886,15 @@ namespace MsgPack {
         return (index < elements.size()) ? elements[index].get() : nullptr;
     }
 
-
-
     Map::Map(std::vector<std::unique_ptr<Element>>&& _elements)
         : MapHeader(_elements.size()/2), elements(std::move(_elements)) {
-        if(elements.size()%2 == 1)
+        if (elements.size()%2 == 1)
             elements.erase(elements.end()-1);
     }
 
     Map::Map(std::map<std::string, std::unique_ptr<Element>>&& _elements)
         : MapHeader(_elements.size()) {
-        for(auto& pair : _elements) {
+        for (auto& pair : _elements) {
             elements.push_back(std::unique_ptr<Element>(new MsgPack::String(pair.first)));
             elements.push_back(std::move(pair.second));
         }
@@ -907,18 +902,19 @@ namespace MsgPack {
 
     bool Map::containerDeserialized() {
         uint32_t len = getLength();
-        if(len > 0) {
+        if (len > 0) {
             elements = std::vector<std::unique_ptr<Element>>(len*2);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     std::unique_ptr<Element> Map::copy() const {
         auto len = getLength();
         std::vector<std::unique_ptr<Element>> _elements;
         _elements.reserve(len);
-        for(const auto& i : elements)
+        for (const auto& i : elements)
             _elements.push_back(std::unique_ptr<Element>(i->copy()));
         return std::unique_ptr<Element>(new Map(std::move(_elements)));
     }
@@ -926,11 +922,11 @@ namespace MsgPack {
     void Map::toJSON(std::ostream& stream) const {
         uint64_t len = elements.size();
         stream << "{";
-        if(len > 0) {
+        if (len > 0) {
             elements[0]->toJSON(stream);
             stream << ": ";
             elements[1]->toJSON(stream);
-            for(uint64_t i = 2; i < len; i += 2) {
+            for (uint64_t i = 2; i < len; i += 2) {
                 stream << ", ";
                 elements[i]->toJSON(stream);
                 stream << ": ";
@@ -943,7 +939,7 @@ namespace MsgPack {
     uint32_t Map::getSizeInBytes() const {
         uint32_t size = getHeaderLength(),
                  len = elements.size();
-        for(uint32_t i = 1; i < len; ++i)
+        for (uint32_t i = 1; i < len; ++i)
             size += elements[i]->getSizeInBytes();
         return size;
     }
@@ -954,9 +950,9 @@ namespace MsgPack {
 
     std::map<std::string, Element*> Map::getElementsMap() const {
         std::map<std::string, Element*> map;
-        for(size_t index = 0; index < elements.size(); index += 2) {
+        for (size_t index = 0; index < elements.size(); index += 2) {
             String* key = dynamic_cast<String*>(elements[index].get());
-            if(index+1 == elements.size()) break;
+            if (index+1 == elements.size()) break;
             Element* value = elements[index+1].get();
             map.insert(std::pair<std::string, Element*>(key->stdString(), value));
         }
@@ -965,9 +961,9 @@ namespace MsgPack {
 
     std::pair<String*, Element*> Map::getEntry(uint32_t index) const {
         index = index*2;
-        if(index+1 < elements.size()) {
+        if (index+1 < elements.size()) {
             auto key = dynamic_cast<String*>(elements[index].get());
-            if(key)
+            if (key)
                 return std::pair<String*, Element*>(key, elements[index+1].get());
         }
         return std::pair<String*, Element*>(nullptr, nullptr);
@@ -989,15 +985,15 @@ namespace MsgPack {
         bool deserializeAll = (bytesLeft == 0);
         std::streamsize bytesDone = 0;
 
-        while(bytesLeft > 0 || deserializeAll) {
-            if(deserializeAll) bytesLeft = LONG_MAX;
+        while (bytesLeft > 0 || deserializeAll) {
+            if (deserializeAll) bytesLeft = LONG_MAX;
 
             // Try to pull next element if necessary
-            if(stack.size() == 0) {
+            if (stack.size() == 0) {
                 rootElement = pullElement();
 
-                if(!rootElement)
-                    break; // Got no element: quit
+                if (!rootElement)
+                    break;  // Got no element: quit
 
                 stack.push_back(StackElement(rootElement.get(), rootElement->startSerialize()));
             }
@@ -1006,19 +1002,20 @@ namespace MsgPack {
             StackElement* stackPointer = &stack[stack.size()-1];
 
             // Serialize element
-            std::streamsize bytesWritten = stackPointer->first->serialize(stackPointer->second, streamBuffer, bytesLeft);
+            std::streamsize bytesWritten = stackPointer->first->serialize(stackPointer->second, \
+                    streamBuffer, bytesLeft);
             bytesLeft -= bytesWritten;
             bytesDone += bytesWritten;
 
-            if(bytesWritten == 0)
-                break; // Stream overflow: quit
+            if (bytesWritten == 0)
+                break;   // Stream overflow: quit
 
-            if(stackPointer->second < stackPointer->first->getEndPos())
+            if (stackPointer->second < stackPointer->first->getEndPos())
                 continue;  // Not done yet
 
             // Finish element
             std::vector<std::unique_ptr<Element>>* container = stackPointer->first->getElementsVector();
-            if(container && container->size() > 0) {
+            if (container && container->size() > 0) {
                 // Serialized header, begin with first child
                 Element* childElement = container->begin()->get();
                 stack.push_back(StackElement(childElement, childElement->startSerialize()));
@@ -1027,11 +1024,11 @@ namespace MsgPack {
 
             // Find lowest done container in stack
             uint32_t stackIndex = stack.size()-1;
-            while(true) {
+            while (true) {
                 stackPointer = &stack[stackIndex];
                 container = stackPointer->first->getElementsVector();
-                if(container && stackPointer->second+1 < (int64_t)container->size()) {
-                    //Container is not done yet. move to next element
+                if (container && stackPointer->second+1 < (int64_t)container->size()) {
+                    // Container is not done yet. move to next element
                     int64_t pos = ++stackPointer->second;
                     stackPointer = &stack[++stackIndex];
                     stackPointer->first = (container->begin()+pos)->get();
@@ -1040,7 +1037,7 @@ namespace MsgPack {
                     break;
                 }
                 // Don't drop below stackIndex = 0
-                if(stackIndex == 0)
+                if (stackIndex == 0)
                     break;
                 --stackIndex;
             }
@@ -1049,7 +1046,7 @@ namespace MsgPack {
             stack.erase(stack.begin()+stackIndex, stack.end());
 
             // Check if root element is done
-            if(stackIndex == 0)
+            if (stackIndex == 0)
                 rootElement.reset();
         }
 
@@ -1070,45 +1067,47 @@ namespace MsgPack {
         bool deserializeAll = (bytesLeft == 0);
         std::streamsize bytesDone = 0;
 
-        while(bytesLeft > 0 || deserializeAll) {
-            if(deserializeAll) bytesLeft = LONG_MAX;
+        while (bytesLeft > 0 || deserializeAll) {
+            if (deserializeAll) bytesLeft = LONG_MAX;
 
             // Find highest element in stack
             StackElement* stackPointer = (stack.size() > 0) ? &stack[stack.size()-1] : NULL;
 
-            if(stackPointer && stackPointer->second < stackPointer->first->getEndPos()) {
+            if (stackPointer && stackPointer->second < stackPointer->first->getEndPos()) {
                 // Deserialize element
-                std::streamsize bytesRead = stackPointer->first->deserialize(stackPointer->second, streamBuffer, bytesLeft);
+                std::streamsize bytesRead = stackPointer->first->deserialize(stackPointer->second, \
+                        streamBuffer, bytesLeft);
                 bytesLeft -= bytesRead;
                 bytesDone += bytesRead;
 
-                if(bytesRead == 0) // Stream underflow: quit
+                if (bytesRead == 0)  // Stream underflow: quit
                     break;
 
-                if(stackPointer->second < stackPointer->first->getEndPos() || stackPointer->first->containerDeserialized())
+                if (stackPointer->second < stackPointer->first->getEndPos() || \
+                        stackPointer->first->containerDeserialized())
                     continue;
             } else {
                 // Deserialize next element
                 int read = streamBuffer->sbumpc();
-                if(read == EOF)
+                if (read == EOF)
                     break;
                 --bytesLeft;
                 ++bytesDone;
 
                 Element* element;
                 uint8_t nextByte = static_cast<uint8_t>(read);
-                if(nextByte < Type::FIXMAP || nextByte >= Type::FIXINT)
+                if (nextByte < Type::FIXMAP || nextByte >= Type::FIXINT) {
                     element = new Number();
-                else if(nextByte < Type::FIXARRAY)
+                } else if (nextByte < Type::FIXARRAY) {
                     element = (hierarchy) ? new Map() : new MapHeader();
-                else if(nextByte < Type::FIXSTR)
+                } else if (nextByte < Type::FIXSTR) {
                     element = (hierarchy) ? new Array() : new ArrayHeader();
-                else if(nextByte < Type::NIL)
+                } else if (nextByte < Type::NIL) {
                     element = new String();
-                else
-                    switch(nextByte) {
+                } else {
+                    switch (nextByte) {
                         case Type::NIL:
-						case Type::UNDEFINED:
+                        case Type::UNDEFINED:
                         case Type::BOOL_FALSE:
                         case Type::BOOL_TRUE:
                             element = new Primitive();
@@ -1145,34 +1144,34 @@ namespace MsgPack {
                             element = new Number();
                         break;
                     }
-
+                }
                 // Put element in parent container
-                if(stack.size() > 0) {
+                if (stack.size() > 0) {
                     std::vector<std::unique_ptr<Element>>* container = stackPointer->first->getElementsVector();
                     *(container->begin()+stackPointer->second) = std::move(std::unique_ptr<Element>(element));
-                } else
+                } else {
                     rootElement.reset(element);
-
+                }
                 // Check if element is done
                 int64_t pos = element->startDeserialize(nextByte);
-                if(pos < element->getEndPos() || element->containerDeserialized()) {
+                if (pos < element->getEndPos() || element->containerDeserialized()) {
                     stack.push_back(StackElement(element, pos));
                     continue;
                 }
             }
 
             // Element done
-            if(stack.size() > 0) {
+            if (stack.size() > 0) {
                 // Pop all done containers from stack
                 uint32_t stackIndex = stack.size()-1;
                 std::vector<std::unique_ptr<Element>>* container;
-                while(true) {
+                while (true) {
                     container = stack[stackIndex].first->getElementsVector();
-                    if(container && stack[stackIndex].second+1 < (int64_t)container->size()) {
+                    if (container && stack[stackIndex].second+1 < (int64_t)container->size()) {
                         ++stack[stackIndex++].second;
                         break;
                     }
-                    if(stackIndex == 0)
+                    if (stackIndex == 0)
                         break;
                     --stackIndex;
                 }
@@ -1181,14 +1180,15 @@ namespace MsgPack {
             }
 
             // Trigger event for done element
-            if(stack.size() == 0 && pushElement(std::move(rootElement)))
+            if (stack.size() == 0 && pushElement(std::move(rootElement)))
                 break;  // One element done: quit
         }
 
         return bytesDone;
     }
 
-    std::streamsize Deserializer::deserialize(std::unique_ptr<Element>& element, bool hierarchy, std::streamsize bytesLeft) {
+    std::streamsize Deserializer::deserialize(std::unique_ptr<Element>& element, \
+           bool hierarchy, std::streamsize bytesLeft) {
         return deserialize([&element](std::unique_ptr<Element> parsedElement) {
             element = std::move(parsedElement);
             return true;
@@ -1199,4 +1199,4 @@ namespace MsgPack {
         obj.toJSON(ostream);
         return ostream;
     }
-};
+};  // namespace MsgPack

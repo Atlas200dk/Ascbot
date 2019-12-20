@@ -19,8 +19,8 @@
 
 #if defined(_MSC_VER) && !defined(__clang__)
 RAPIDJSON_DIAG_PUSH
-RAPIDJSON_DIAG_OFF(4244) // conversion from 'type1' to 'type2', possible loss of data
-RAPIDJSON_DIAG_OFF(4702)  // unreachable code
+RAPIDJSON_DIAG_OFF(4244)  // conversion from 'type1' to 'type2', possible loss of data
+RAPIDJSON_DIAG_OFF(4702)   // unreachable code
 #elif defined(__GNUC__)
 RAPIDJSON_DIAG_PUSH
 RAPIDJSON_DIAG_OFF(effc++)
@@ -100,18 +100,16 @@ struct UTF8 {
 
     template<typename OutputStream>
     static void Encode(OutputStream& os, unsigned codepoint) {
-        if (codepoint <= 0x7F)
+        if (codepoint <= 0x7F) {
             os.Put(static_cast<Ch>(codepoint & 0xFF));
-        else if (codepoint <= 0x7FF) {
+        } else if (codepoint <= 0x7FF) {
             os.Put(static_cast<Ch>(0xC0 | ((codepoint >> 6) & 0xFF)));
             os.Put(static_cast<Ch>(0x80 | ((codepoint & 0x3F))));
-        }
-        else if (codepoint <= 0xFFFF) {
+        } else if (codepoint <= 0xFFFF) {
             os.Put(static_cast<Ch>(0xE0 | ((codepoint >> 12) & 0xFF)));
             os.Put(static_cast<Ch>(0x80 | ((codepoint >> 6) & 0x3F)));
             os.Put(static_cast<Ch>(0x80 | (codepoint & 0x3F)));
-        }
-        else {
+        } else {
             RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
             os.Put(static_cast<Ch>(0xF0 | ((codepoint >> 18) & 0xFF)));
             os.Put(static_cast<Ch>(0x80 | ((codepoint >> 12) & 0x3F)));
@@ -122,18 +120,16 @@ struct UTF8 {
 
     template<typename OutputStream>
     static void EncodeUnsafe(OutputStream& os, unsigned codepoint) {
-        if (codepoint <= 0x7F)
+        if (codepoint <= 0x7F) {
             PutUnsafe(os, static_cast<Ch>(codepoint & 0xFF));
-        else if (codepoint <= 0x7FF) {
+        } else if (codepoint <= 0x7FF) {
             PutUnsafe(os, static_cast<Ch>(0xC0 | ((codepoint >> 6) & 0xFF)));
             PutUnsafe(os, static_cast<Ch>(0x80 | ((codepoint & 0x3F))));
-        }
-        else if (codepoint <= 0xFFFF) {
+        } else if (codepoint <= 0xFFFF) {
             PutUnsafe(os, static_cast<Ch>(0xE0 | ((codepoint >> 12) & 0xFF)));
             PutUnsafe(os, static_cast<Ch>(0x80 | ((codepoint >> 6) & 0x3F)));
             PutUnsafe(os, static_cast<Ch>(0x80 | (codepoint & 0x3F)));
-        }
-        else {
+        } else {
             RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
             PutUnsafe(os, static_cast<Ch>(0xF0 | ((codepoint >> 18) & 0xFF)));
             PutUnsafe(os, static_cast<Ch>(0x80 | ((codepoint >> 12) & 0x3F)));
@@ -205,16 +201,16 @@ struct UTF8 {
         // Referring to DFA of http://bjoern.hoehrmann.de/utf-8/decoder/dfa/
         // With new mapping 1 -> 0x10, 7 -> 0x20, 9 -> 0x40, such that AND operation can test multiple types.
         static const unsigned char type[] = {
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,0x10,
-            0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,
-            0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
-            0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,
-            8,8,2,2,2,2,2,2,2,2,2,2,2,2,2,2,  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-            10,3,3,3,3,3,3,3,3,3,3,3,3,4,3,3, 11,6,6,6,5,8,8,8,8,8,8,8,8,8,8,8,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+            0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
+            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+            8, 8, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,  2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
+            10, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 3, 3, 11, 6,  6, 6, 5, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
         };
         return type[c];
     }
@@ -278,8 +274,7 @@ struct UTF16 {
         if (codepoint <= 0xFFFF) {
             RAPIDJSON_ASSERT(codepoint < 0xD800 || codepoint > 0xDFFF);  // Code point itself cannot be surrogate pair
             os.Put(static_cast<typename OutputStream::Ch>(codepoint));
-        }
-        else {
+        } else {
             RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
             unsigned v = codepoint - 0x10000;
             os.Put(static_cast<typename OutputStream::Ch>((v >> 10) | 0xD800));
@@ -294,8 +289,7 @@ struct UTF16 {
         if (codepoint <= 0xFFFF) {
             RAPIDJSON_ASSERT(codepoint < 0xD800 || codepoint > 0xDFFF);  // Code point itself cannot be surrogate pair
             PutUnsafe(os, static_cast<typename OutputStream::Ch>(codepoint));
-        }
-        else {
+        } else {
             RAPIDJSON_ASSERT(codepoint <= 0x10FFFF);
             unsigned v = codepoint - 0x10000;
             PutUnsafe(os, static_cast<typename OutputStream::Ch>((v >> 10) | 0xD800));
@@ -310,8 +304,7 @@ struct UTF16 {
         if (c < 0xD800 || c > 0xDFFF) {
             *codepoint = static_cast<unsigned>(c);
             return true;
-        }
-        else if (c <= 0xDBFF) {
+        } else if (c <= 0xDBFF) {
             *codepoint = (static_cast<unsigned>(c) & 0x3FF) << 10;
             c = is.Take();
             *codepoint |= (static_cast<unsigned>(c) & 0x3FF);
@@ -327,9 +320,9 @@ struct UTF16 {
         RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputStream::Ch) >= 2);
         typename InputStream::Ch c;
         os.Put(static_cast<typename OutputStream::Ch>(c = is.Take()));
-        if (c < 0xD800 || c > 0xDFFF)
+        if (c < 0xD800 || c > 0xDFFF) {
             return true;
-        else if (c <= 0xDBFF) {
+        } else if (c <= 0xDBFF) {
             os.Put(c = is.Take());
             return c >= 0xDC00 && c <= 0xDFFF;
         }
@@ -713,4 +706,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_ENCODINGS_H_
+#endif  // RAPIDJSON_ENCODINGS_H_

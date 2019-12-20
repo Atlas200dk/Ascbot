@@ -12,12 +12,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#ifndef RAPIDJSON_INTERNAL_STACK_H_
-#define RAPIDJSON_INTERNAL_STACK_H_
-
+#ifndef _RAPIDJSON_INTERNAL_STACK_H_
+#define _RAPIDJSON_INTERNAL_STACK_H_
+#include <cstddef>
 #include "../allocators.h"
 #include "swap.h"
-#include <cstddef>
+
 
 #if defined(__clang__)
 RAPIDJSON_DIAG_PUSH
@@ -38,7 +38,8 @@ class Stack {
 public:
     // Optimization note: Do not allocate memory for stack_ in constructor.
     // Do it lazily when first Push() -> Expand() -> Resize().
-    Stack(Allocator* allocator, size_t stackCapacity) : allocator_(allocator), ownAllocator_(0), stack_(0), stackTop_(0), stackEnd_(0), initialCapacity_(stackCapacity) {
+    Stack(Allocator* allocator, size_t stackCapacity) : allocator_(allocator), ownAllocator_(0), \
+          stack_(0), stackTop_(0), stackEnd_(0), initialCapacity_(stackCapacity) {
     }
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
@@ -48,8 +49,7 @@ public:
           stack_(rhs.stack_),
           stackTop_(rhs.stackTop_),
           stackEnd_(rhs.stackEnd_),
-          initialCapacity_(rhs.initialCapacity_)
-    {
+          initialCapacity_(rhs.initialCapacity_) {
         rhs.allocator_ = 0;
         rhs.ownAllocator_ = 0;
         rhs.stack_ = 0;
@@ -65,8 +65,7 @@ public:
 
 #if RAPIDJSON_HAS_CXX11_RVALUE_REFS
     Stack& operator=(Stack&& rhs) {
-        if (&rhs != this)
-        {
+        if (&rhs != this) {
             Destroy();
 
             allocator_ = rhs.allocator_;
@@ -105,9 +104,9 @@ public:
             stack_ = 0;
             stackTop_ = 0;
             stackEnd_ = 0;
-        }
-        else
+        } else {
             Resize(GetSize());
+        }
     }
 
     // Optimization note: try to minimize the size of this function for force inline.
@@ -229,4 +228,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif   // RAPIDJSON_STACK_H_
+#endif   // _RAPIDJSON_STACK_H_

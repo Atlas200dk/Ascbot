@@ -16,18 +16,18 @@
 // Loitsch, Florian. "Printing floating-point numbers quickly and accurately with
 // integers." ACM Sigplan Notices 45.6 (2010): 233-243.
 
-#ifndef RAPIDJSON_DIYFP_H_
-#define RAPIDJSON_DIYFP_H_
-
-#include "../rapidjson.h"
+#ifndef RAPIDJSON_INTERNAL_DIYFP_H_
+#define RAPIDJSON_INTERNAL_DIYFP_H_
 #include <limits>
+
+
 
 #if defined(_MSC_VER) && defined(_M_AMD64) && !defined(__INTEL_COMPILER)
 #include <intrin.h>
 #pragma intrinsic(_BitScanReverse64)
 #pragma intrinsic(_umul128)
 #endif
-
+#include "../rapidjson.h"
 RAPIDJSON_NAMESPACE_BEGIN
 namespace internal {
 
@@ -57,8 +57,7 @@ struct DiyFp {
         if (biased_e != 0) {
             f = significand + kDpHiddenBit;
             e = biased_e - kDpExponentBias;
-        }
-        else {
+        } else {
             f = significand;
             e = kDpMinExponent + 1;
         }
@@ -72,15 +71,15 @@ struct DiyFp {
 #if defined(_MSC_VER) && defined(_M_AMD64)
         uint64_t h;
         uint64_t l = _umul128(f, rhs.f, &h);
-        if (l & (uint64_t(1) << 63)) // rounding
+        if (l & (uint64_t(1) << 63))  // rounding
             h++;
         return DiyFp(h, e + rhs.e + 64);
-#elif (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__x86_64__)
+#elif(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__x86_64__)
         __extension__ typedef unsigned __int128 uint128;
         uint128 p = static_cast<uint128>(f) * static_cast<uint128>(rhs.f);
         uint64_t h = static_cast<uint64_t>(p >> 64);
         uint64_t l = static_cast<uint64_t>(p);
-        if (l & (uint64_t(1) << 63)) // rounding
+        if (l & (uint64_t(1) << 63))  // rounding
             h++;
         return DiyFp(h, e + rhs.e + 64);
 #else
@@ -94,15 +93,15 @@ struct DiyFp {
         const uint64_t ad = a * d;
         const uint64_t bd = b * d;
         uint64_t tmp = (bd >> 32) + (ad & M32) + (bc & M32);
-        tmp += 1U << 31;  /// mult_round
+        tmp += 1U << 31;   /// mult_round
         return DiyFp(ac + (ad >> 32) + (bc >> 32) + (tmp >> 32), e + rhs.e + 64);
 #endif
     }
 
     DiyFp Normalize() const {
-        RAPIDJSON_ASSERT(f != 0); // https://stackoverflow.com/a/26809183/291737
+        RAPIDJSON_ASSERT(f != 0);  // https://stackoverflow.com/a/26809183/291737
 #if defined(_MSC_VER) && defined(_M_AMD64)
-        unsigned long index;
+        uint64 index;
         _BitScanReverse64(&index, f);
         return DiyFp(f << (63 - index), e - (63 - index));
 #elif defined(__GNUC__) && __GNUC__ >= 4
@@ -236,8 +235,7 @@ inline DiyFp GetCachedPowerByIndex(size_t index) {
 }
 
 inline DiyFp GetCachedPower(int e, int* K) {
-
-    //int k = static_cast<int>(ceil((-61 - e) * 0.30102999566398114)) + 374;
+    // int k = static_cast<int>(ceil((-61 - e) * 0.30102999566398114)) + 374;
     double dk = (-61 - e) * 0.30102999566398114 + 347;  // dk must be positive, so can do ceiling in positive
     int k = static_cast<int>(dk);
     if (dk - k > 0.0)
@@ -265,7 +263,7 @@ RAPIDJSON_DIAG_POP
 RAPIDJSON_DIAG_OFF(padded)
 #endif
 
-} // namespace internal
+}  // namespace internal
 RAPIDJSON_NAMESPACE_END
 
-#endif // RAPIDJSON_DIYFP_H_
+#endif  // RAPIDJSON_INTERNAL_DIYFP_H_

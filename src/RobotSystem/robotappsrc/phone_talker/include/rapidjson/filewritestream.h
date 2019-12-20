@@ -14,9 +14,9 @@
 
 #ifndef RAPIDJSON_FILEWRITESTREAM_H_
 #define RAPIDJSON_FILEWRITESTREAM_H_
-
-#include "stream.h"
 #include <cstdio>
+#include "stream.h"
+
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH
@@ -33,7 +33,8 @@ class FileWriteStream {
 public:
     typedef char Ch;    //!< Character type. Only support char.
 
-    FileWriteStream(std::FILE* fp, char* buffer, size_t bufferSize) : fp_(fp), buffer_(buffer), bufferEnd_(buffer + bufferSize), current_(buffer_) { 
+    FileWriteStream(std::FILE* fp, char* buffer, size_t bufferSize) : fp_(fp), buffer_(buffer),
+            bufferEnd_(buffer + bufferSize), current_(buffer_) {
         RAPIDJSON_ASSERT(fp_ != 0);
     }
 
@@ -101,4 +102,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_FILESTREAM_H_
+#endif  // RAPIDJSON_FILEWRITESTREAM_H_

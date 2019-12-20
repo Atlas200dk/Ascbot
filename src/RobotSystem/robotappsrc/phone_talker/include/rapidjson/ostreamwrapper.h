@@ -14,9 +14,9 @@
 
 #ifndef RAPIDJSON_OSTREAMWRAPPER_H_
 #define RAPIDJSON_OSTREAMWRAPPER_H_
-
-#include "stream.h"
 #include <iosfwd>
+#include "stream.h"
+
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH
@@ -45,7 +45,7 @@ template <typename StreamType>
 class BasicOStreamWrapper {
 public:
     typedef typename StreamType::char_type Ch;
-    BasicOStreamWrapper(StreamType& stream) : stream_(stream) {}
+    explicit BasicOStreamWrapper(StreamType& stream) : stream_(stream) {}
 
     void Put(Ch c) {
         stream_.put(c);
@@ -78,4 +78,4 @@ RAPIDJSON_DIAG_POP
 
 RAPIDJSON_NAMESPACE_END
 
-#endif // RAPIDJSON_OSTREAMWRAPPER_H_
+#endif  // RAPIDJSON_OSTREAMWRAPPER_H_

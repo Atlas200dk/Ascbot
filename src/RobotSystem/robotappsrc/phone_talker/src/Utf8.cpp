@@ -19,80 +19,78 @@ namespace utf8 {
     const char bom[] = "\xEF\xBB\xBF";
 
     void setBOM(std::string& str) {
-        if(checkBOM(str.begin()))
+        if (checkBOM(str.begin()))
             return;
         str.insert(0, bom);
     }
 
-	size_t length(const char* str) {
+    size_t length(const char* str) {
         return difference(str+strlen(str), str);
-	}
+    }
 
-	size_t length(const std::string& str) {
+    size_t length(const std::string& str) {
         return difference(str.end(), str.begin());
-	}
+    }
 
-	void insert(std::string& dst, size_t pos, const char* src) {
+    void insert(std::string& dst, size_t pos, const char* src) {
         auto iterator = dst.begin();
-		forwardUntil(iterator, dst.end(), pos);
+        forwardUntil(iterator, dst.end(), pos);
         dst.insert(iterator - dst.begin(), src);
-	}
+    }
 
-	void erase(std::string& str, size_t pos, size_t len) {
-		auto begin = str.begin(), from = begin;
-		forwardUntil(from, str.end(), pos);
-		auto to = from;
-		forwardUntil(to, str.end(), len);
-		str.erase(from, to);
-	}
+    void erase(std::string& str, size_t pos, size_t len) {
+        auto begin = str.begin(), from = begin;
+        forwardUntil(from, str.end(), pos);
+        auto to = from;
+        forwardUntil(to, str.end(), len);
+        str.erase(from, to);
+    }
+    void replace(std::string& dst, size_t pos, size_t len, const char* src) {
+        auto begin(dst.begin()), from = begin;
+        forwardUntil(from, dst.end(), pos);
+        auto to = from;
+        forwardUntil(to, dst.end(), len);
+        dst.replace(from-begin, to-from, src);
+    }
 
-	void replace(std::string& dst, size_t pos, size_t len, const char* src) {
-		auto begin(dst.begin()), from = begin;
-		forwardUntil(from, dst.end(), pos);
-		auto to = from;
-		forwardUntil(to, dst.end(), len);
-		dst.replace(from-begin, to-from, src);
-	}
+    size_t byteSize(char32_t c) {
+        return (c < 0x800) ? ((c < 0x80) ? 1 : 2) : ((c < 0x10000) ? 3 : 4);
+    }
 
-	size_t byteSize(char32_t c) {
-		return (c < 0x800) ? ((c < 0x80) ? 1 : 2) : ((c < 0x10000) ? 3 : 4);
-	}
+    void append(std::string& str, char32_t c) {
+        switch (byteSize(c)) {
+            case 1:
+                str.push_back(static_cast<char>(c));
+                break;
+            case 2:
+                str.push_back(static_cast<char>(0xC0 | (c >> 6)));
+                str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+                break;
+            case 3:
+                str.push_back(static_cast<char>(0xE0 | (c >> 12)));
+                str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
+                str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+                break;
+            case 4:
+                str.push_back(static_cast<char>(0xF0 | (c >> 18)));
+                str.push_back(static_cast<char>(0x80 | ((c >> 12) & 0x3F)));
+                str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
+                str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
+            break;
+     }
+     }
 
-	void append(std::string& str, char32_t c) {
-		switch(byteSize(c)) {
-			case 1:
-			    str.push_back(static_cast<char>(c));
-			    break;
-			case 2:
-    			str.push_back(static_cast<char>(0xC0 | (c >> 6)));
-    			str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
-    			break;
-			case 3:
-    			str.push_back(static_cast<char>(0xE0 | (c >> 12)));
-    			str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
-    			str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
-    			break;
-			case 4:
-    			str.push_back(static_cast<char>(0xF0 | (c >> 18)));
-    			str.push_back(static_cast<char>(0x80 | ((c >> 12) & 0x3F)));
-    			str.push_back(static_cast<char>(0x80 | ((c >> 6) & 0x3F)));
-    			str.push_back(static_cast<char>(0x80 | (c & 0x3F)));
-    			break;
-		}
-	}
-
-	std::u32string convertToUtf32(const std::string& str) {
-		std::u32string result;
-		auto begin = str.begin(), end = str.end();
-		for(auto i = begin; i != end; increment(i))
-			result.push_back(toUtf32(i));
-		return result;
-	}
-
-	std::string convertFromUtf32(const std::u32string& str) {
-		std::string result;
-		for(size_t i = 0; i < str.length(); ++i)
-			append(result, str[i]);
-		return result;
-	}
-}
+    std::u32string convertToUtf32(const std::string& str) {
+        std::u32string result;
+        auto begin = str.begin(), end = str.end();
+        for (auto i = begin; i != end; increment(i))
+            result.push_back(toUtf32(i));
+        return result;
+    }
+    std::string convertFromUtf32(const std::u32string& str) {
+        std::string result;
+        for (size_t i = 0; i < str.length(); ++i)
+            append(result, str[i]);
+        return result;
+    }
+}  // namespace utf8

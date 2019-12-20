@@ -14,9 +14,9 @@
 
 #ifndef RAPIDJSON_FILEREADSTREAM_H_
 #define RAPIDJSON_FILEREADSTREAM_H_
-
-#include "stream.h"
 #include <cstdio>
+#include "stream.h"
+
 
 #ifdef __clang__
 RAPIDJSON_DIAG_PUSH
@@ -41,7 +41,8 @@ public:
         \param buffer user-supplied buffer.
         \param bufferSize size of buffer in bytes. Must >=4 bytes.
     */
-    FileReadStream(std::FILE* fp, char* buffer, size_t bufferSize) : fp_(fp), buffer_(buffer), bufferSize_(bufferSize), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) { 
+    FileReadStream(std::FILE* fp, char* buffer, size_t bufferSize) : fp_(fp), buffer_(buffer),
+            bufferSize_(bufferSize), bufferLast_(0), current_(buffer_), readCount_(0), count_(0), eof_(false) {
         RAPIDJSON_ASSERT(fp_ != 0);
         RAPIDJSON_ASSERT(bufferSize >= 4);
         Read();
@@ -64,9 +65,9 @@ public:
 
 private:
     void Read() {
-        if (current_ < bufferLast_)
+        if (current_ < bufferLast_) {
             ++current_;
-        else if (!eof_) {
+        } else if (!eof_) {
             count_ += readCount_;
             readCount_ = std::fread(buffer_, 1, bufferSize_, fp_);
             bufferLast_ = buffer_ + readCount_ - 1;
@@ -96,4 +97,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_FILESTREAM_H_
+#endif  // RAPIDJSON_FILEREADSTREAM_H_

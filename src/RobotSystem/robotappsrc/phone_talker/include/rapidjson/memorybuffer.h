@@ -7,7 +7,7 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
+// Unless required by applicable law or agreed to in writing, software distributed
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
@@ -37,7 +37,8 @@ template <typename Allocator = CrtAllocator>
 struct GenericMemoryBuffer {
     typedef char Ch;  // byte
 
-    GenericMemoryBuffer(Allocator* allocator = 0, size_t capacity = kDefaultCapacity) : stack_(allocator, capacity) {}
+    explicit GenericMemoryBuffer(Allocator* allocator = 0, size_t capacity = kDefaultCapacity) :
+            stack_(allocator, capacity) {}
 
     void Put(Ch c) { *stack_.template Push<Ch>() = c; }
     void Flush() {}

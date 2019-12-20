@@ -38,6 +38,7 @@ RAPIDJSON_NAMESPACE_BEGIN
 template <typename Encoding, typename InputByteStream>
 class EncodedInputStream {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename InputByteStream::Ch) == 1);
+
 public:
     typedef typename Encoding::Ch Ch;
 
@@ -69,7 +70,7 @@ class EncodedInputStream<UTF8<>, MemoryStream> {
 public:
     typedef UTF8<>::Ch Ch;
 
-    EncodedInputStream(MemoryStream& is) : is_(is) {
+    explicit EncodedInputStream(MemoryStream& is) : is_(is) {
         if (static_cast<unsigned char>(is_.Peek()) == 0xEFu) is_.Take();
         if (static_cast<unsigned char>(is_.Peek()) == 0xBBu) is_.Take();
         if (static_cast<unsigned char>(is_.Peek()) == 0xBFu) is_.Take();
@@ -99,6 +100,7 @@ private:
 template <typename Encoding, typename OutputByteStream>
 class EncodedOutputStream {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputByteStream::Ch) == 1);
+
 public:
     typedef typename Encoding::Ch Ch;
 
@@ -134,6 +136,7 @@ private:
 template <typename CharType, typename InputByteStream>
 class AutoUTFInputStream {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename InputByteStream::Ch) == 1);
+
 public:
     typedef CharType Ch;
 
@@ -142,7 +145,7 @@ public:
         \param is input stream to be wrapped.
         \param type UTF encoding type if it is not detected from the stream.
     */
-    AutoUTFInputStream(InputByteStream& is, UTFType type = kUTF8) : is_(&is), type_(type), hasBOM_(false) {
+    explicit AutoUTFInputStream(InputByteStream& is, UTFType type = kUTF8) : is_(&is), type_(type), hasBOM_(false) {
         RAPIDJSON_ASSERT(type >= kUTF8 && type <= kUTF32BE);
         DetectType();
         static const TakeFunc f[] = { RAPIDJSON_ENCODINGS_FUNC(Take) };
@@ -182,11 +185,17 @@ private:
 
         unsigned bom = static_cast<unsigned>(c[0] | (c[1] << 8) | (c[2] << 16) | (c[3] << 24));
         hasBOM_ = false;
-        if (bom == 0xFFFE0000)                  { type_ = kUTF32BE; hasBOM_ = true; is_->Take(); is_->Take(); is_->Take(); is_->Take(); }
-        else if (bom == 0x0000FEFF)             { type_ = kUTF32LE; hasBOM_ = true; is_->Take(); is_->Take(); is_->Take(); is_->Take(); }
-        else if ((bom & 0xFFFF) == 0xFFFE)      { type_ = kUTF16BE; hasBOM_ = true; is_->Take(); is_->Take();                           }
-        else if ((bom & 0xFFFF) == 0xFEFF)      { type_ = kUTF16LE; hasBOM_ = true; is_->Take(); is_->Take();                           }
-        else if ((bom & 0xFFFFFF) == 0xBFBBEF)  { type_ = kUTF8;    hasBOM_ = true; is_->Take(); is_->Take(); is_->Take();              }
+        if (bom == 0xFFFE0000) {
+            type_ = kUTF32BE; hasBOM_ = true; is_->Take(); is_->Take(); is_->Take(); is_->Take();
+        } else if (bom == 0x0000FEFF) {
+               type_ = kUTF32LE; hasBOM_ = true; is_->Take(); is_->Take(); is_->Take(); is_->Take();
+        } else if ((bom & 0xFFFF) == 0xFFFE) {
+               type_ = kUTF16BE; hasBOM_ = true; is_->Take(); is_->Take();
+        } else if ((bom & 0xFFFF) == 0xFEFF) {
+            type_ = kUTF16LE; hasBOM_ = true; is_->Take(); is_->Take();
+        } else if ((bom & 0xFFFFFF) == 0xBFBBEF)  {
+            type_ = kUTF8;    hasBOM_ = true; is_->Take(); is_->Take(); is_->Take();
+        }
 
         // RFC 4627: Section 3
         // "Since the first two characters of a JSON text will always be ASCII
@@ -207,7 +216,7 @@ private:
             case 0x01: type_ = kUTF32LE; break;
             case 0x05: type_ = kUTF16LE; break;
             case 0x0F: type_ = kUTF8;    break;
-            default: break; // Use type defined by user.
+            default: break;  // Use type defined by user.
             }
         }
 
@@ -232,6 +241,7 @@ private:
 template <typename CharType, typename OutputByteStream>
 class AutoUTFOutputStream {
     RAPIDJSON_STATIC_ASSERT(sizeof(typename OutputByteStream::Ch) == 1);
+
 public:
     typedef CharType Ch;
 
@@ -296,4 +306,4 @@ RAPIDJSON_DIAG_POP
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif // RAPIDJSON_FILESTREAM_H_
+#endif  // RAPIDJSON_ENCODEDSTREAM_H_

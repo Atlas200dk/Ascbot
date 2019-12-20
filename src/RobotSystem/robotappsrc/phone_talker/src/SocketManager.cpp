@@ -15,10 +15,10 @@
 
 #include "netLink.h"
 
-#define foreach_e(c, i) for(auto end##i = (c).end(), next##i = (c).begin(), \
-    i = (next##i==end##i)?end##i:next##i++; \
+#define foreach_e(c, i) for (auto end##i = (c).end(), next##i = (c).begin(), \
+    i = (next##i == end##i)?end##i:next##i++; \
     i != next##i; \
-    i = (next##i==end##i)?end##i:next##i++)
+    i = (next##i == end##i)?end##i:next##i++)
 
 #define checkSocketStillValid(socketsSet, iterator, socket) \
     if (socket->status == Socket::Status::NOT_CONNECTED) { \
@@ -83,8 +83,9 @@ void SocketManager::listen(double waitUpToSeconds) {
                 FD_SET(client->handle, &writefds);
                 selection.insert(*clientIterator);
             }
-        } else
+        } else {
             FD_SET(socket->handle, &writefds);
+        }
     }
     if (selection.empty())
         return;
@@ -119,10 +120,10 @@ void SocketManager::listen(double waitUpToSeconds) {
             continue;
 
         if (msgPackSocket) {
-            while(msgPackSocket->queue.size()) {
+            while (msgPackSocket->queue.size()) {
                 std::unique_ptr<MsgPack::Element>& element = msgPackSocket->queue.front();
                 msgPackSocket->serializer << element;
-                if(element)
+                if (element)
                     break;
                 msgPackSocket->queue.pop();
             }
@@ -135,9 +136,9 @@ void SocketManager::listen(double waitUpToSeconds) {
     if (waitUpToSeconds >= 0.0) {
         timeout.tv_sec = waitUpToSeconds;
         timeout.tv_usec = fmod(waitUpToSeconds, 1.0) * 1000000.0;
-    } else
+    } else {
         timeoutPtr = NULL;
-
+    }
     if (select(maxHandle+1, &readfds, NULL, NULL, timeoutPtr) == -1)
         throw Exception(Exception::ERROR_SELECT);
 
@@ -150,7 +151,7 @@ void SocketManager::listen(double waitUpToSeconds) {
         if (socket->type == Socket::Type::TCP_SERVER) {
             // Server got a new client
             std::shared_ptr<Socket> newSocket = socket->accept();
-            if(onConnectRequest && !onConnectRequest(this, *iterator, newSocket)) {
+            if (onConnectRequest && !onConnectRequest(this, *iterator, newSocket)) {
                 newSocket->disconnect();
                 socket->clients.erase(newSocket);
             }
@@ -181,4 +182,4 @@ void SocketManager::listen(double waitUpToSeconds) {
     }
 }
 
-};
+};  // namespace netLink

@@ -7,7 +7,7 @@
 //
 // http://opensource.org/licenses/MIT
 //
-// Unless required by applicable law or agreed to in writing, software distributed 
+// Unless required by applicable law or agreed to in writing, software distributed
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
@@ -38,7 +38,7 @@ RAPIDJSON_NAMESPACE_BEGIN
     \note implements Stream concept
 */
 struct MemoryStream {
-    typedef char Ch; // byte
+    typedef char Ch;  // byte
 
     MemoryStream(const Ch *src, size_t size) : src_(src), begin_(src), end_(src + size), size_(size) {}
 
@@ -68,4 +68,4 @@ RAPIDJSON_NAMESPACE_END
 RAPIDJSON_DIAG_POP
 #endif
 
-#endif   // RAPIDJSON_MEMORYBUFFER_H_
+#endif   // RAPIDJSON_MEMORYSTREAM_H_

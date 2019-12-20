@@ -16,8 +16,8 @@
 // Loitsch, Florian. "Printing floating-point numbers quickly and accurately with
 // integers." ACM Sigplan Notices 45.6 (2010): 233-243.
 
-#ifndef RAPIDJSON_DTOA_
-#define RAPIDJSON_DTOA_
+#ifndef RAPIDJSON_INTERNAL_DTOA_H_
+#define RAPIDJSON_INTERNAL_DTOA_H_
 
 #include "itoa.h"   // GetDigitsLut()
 #include "diyfp.h"
@@ -79,7 +79,7 @@ inline void DigitGen(const DiyFp& W, const DiyFp& Mp, uint64_t delta, char* buff
             case  3: d = p1 /        100; p1 %=        100; break;
             case  2: d = p1 /         10; p1 %=         10; break;
             case  1: d = p1;              p1 =           0; break;
-            default:;
+            default: {}
         }
         if (d || *len)
             buffer[(*len)++] = static_cast<char>('0' + static_cast<char>(d));
@@ -136,15 +136,13 @@ inline char* WriteExponent(int K, char* buffer) {
         const char* d = GetDigitsLut() + K * 2;
         *buffer++ = d[0];
         *buffer++ = d[1];
-    }
-    else if (K >= 10) {
+    } else if (K >= 10) {
         const char* d = GetDigitsLut() + K * 2;
         *buffer++ = d[0];
         *buffer++ = d[1];
-    }
-    else
+    }  else {
         *buffer++ = static_cast<char>('0' + static_cast<char>(K));
-
+    }
     return buffer;
 }
 
@@ -158,8 +156,7 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
         buffer[kk] = '.';
         buffer[kk + 1] = '0';
         return &buffer[kk + 2];
-    }
-    else if (0 < kk && kk <= 21) {
+    } else if (0 < kk && kk <= 21) {
         // 1234e-2 -> 12.34
         std::memmove(&buffer[kk + 1], &buffer[kk], static_cast<size_t>(length - kk));
         buffer[kk] = '.';
@@ -169,12 +166,11 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
             for (int i = kk + maxDecimalPlaces; i > kk + 1; i--)
                 if (buffer[i] != '0')
                     return &buffer[i + 1];
-            return &buffer[kk + 2]; // Reserve one zero
-        }
-        else
+            return &buffer[kk + 2];  // Reserve one zero
+        } else {
             return &buffer[length + 1];
-    }
-    else if (-6 < kk && kk <= 0) {
+        }
+    } else if (-6 < kk && kk <= 0) {
         // 1234e-6 -> 0.001234
         const int offset = 2 - kk;
         std::memmove(&buffer[offset], &buffer[0], static_cast<size_t>(length));
@@ -188,24 +184,21 @@ inline char* Prettify(char* buffer, int length, int k, int maxDecimalPlaces) {
             for (int i = maxDecimalPlaces + 1; i > 2; i--)
                 if (buffer[i] != '0')
                     return &buffer[i + 1];
-            return &buffer[3]; // Reserve one zero
-        }
-        else
+            return &buffer[3];  // Reserve one zero
+        } else {
             return &buffer[length + offset];
-    }
-    else if (kk < -maxDecimalPlaces) {
+        }
+    } else if (kk < -maxDecimalPlaces) {
         // Truncate to zero
         buffer[0] = '0';
         buffer[1] = '.';
         buffer[2] = '0';
         return &buffer[3];
-    }
-    else if (length == 1) {
+    } else if (length == 1) {
         // 1e30
         buffer[1] = 'e';
         return WriteExponent(kk - 1, &buffer[2]);
-    }
-    else {
+    } else {
         // 1234e30 -> 1.234e33
         std::memmove(&buffer[2], &buffer[1], static_cast<size_t>(length - 1));
         buffer[1] = '.';
@@ -224,8 +217,7 @@ inline char* dtoa(double value, char* buffer, int maxDecimalPlaces = 324) {
         buffer[1] = '.';
         buffer[2] = '0';
         return &buffer[3];
-    }
-    else {
+    } else {
         if (value < 0) {
             *buffer++ = '-';
             value = -value;
@@ -243,4 +235,4 @@ RAPIDJSON_DIAG_POP
 }   // namespace internal
 RAPIDJSON_NAMESPACE_END
 
-#endif   // RAPIDJSON_DTOA_
+#endif   // RAPIDJSON_INTERNAL_DTOA_H_
