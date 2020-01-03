@@ -20,6 +20,7 @@ MindStudio及DDK的安装具体请参考[华为Atlas官网](https://ascend.huawe
 # 3. Atlas 200 DK的ROS环境搭建
 
 如果用Ascbot自带的系统sd卡，ros环境已经具备，请跳过ros环境搭建步骤。
+如果是按照文档【依照Ascbot智能小车系统制作指南创建系统SD卡】制的卡，则跳过ros环境搭建。
 
 首先，连接小车无线路由器，配置无线路由器接入互联网，从无线路由器web页面查看Atlas 200 DK的ip,具体请参考华为无线路由器的使用说明。
 
@@ -54,41 +55,44 @@ $  vim /etc/resolv.conf
 
 
 ## 3.2 更换Atlas 200 DK的安装源
-添加安装源，打开 /etc/apt/sources.list，添加以下内容，并保存。
+添加安装源，打开 /etc/apt/sources.list，添加以下国内源到e文件中，可以根据实际速度测试结果设置比较快的源，并保存。
 
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial main
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates main
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial main
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main
-        deb http://ports.ubuntu.com/ubuntu-ports/ xenial-updates main
-        deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial main multiverse restricted universe
-        deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-security main multiverse restricted universe
-        deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-updates main multiverse restricted universe
-        deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-backports main multiverse restricted universe
-        deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial main multiverse restricted universe
-        deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-security main multiverse restricted universe
-        deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-updates main multiverse restricted universe
-        deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ xenial-backports main multiverse restricted universe
-        deb-src http://archive.ubuntu.com/ubuntu xenial main restricted #Added by software-properties
-        deb http://mirrors.aliyun.com/ubuntu/ xenial main restricted
-        deb-src http://mirrors.aliyun.com/ubuntu/ xenial main restricted multiverse universe #Added by software-properties
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted
-        deb-src http://mirrors.aliyun.com/ubuntu/ xenial-updates main restricted multiverse universe #Added by software-properties
-        deb http://mirrors.aliyun.com/ubuntu/ xenial universe
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-updates universe
-        deb http://mirrors.aliyun.com/ubuntu/ xenial multiverse
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-updates multiverse
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse
-        deb-src http://mirrors.aliyun.com/ubuntu/ xenial-backports main restricted universe multiverse #Added by software-properties
-        deb http://archive.canonical.com/ubuntu xenial partner
-        deb-src http://archive.canonical.com/ubuntu xenial partner
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted
-        deb-src http://mirrors.aliyun.com/ubuntu/ xenial-security main restricted multiverse universe #Added by software-properties
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-security universe
-        deb http://mirrors.aliyun.com/ubuntu/ xenial-security multiverse
-        deb-src http://mirrors.ustc.edu.cn/ubuntu-ports/ xenial-updates main multiverse restricted universe 
- 
+        ##中科大源
+        deb https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse
+        deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic main restricted universe multiverse
+        deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+        deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-updates main restricted universe multiverse
+        deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+        deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-backports main restricted universe multiverse
+        deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+        deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-security main restricted universe multiverse
+        deb https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+        deb-src https://mirrors.ustc.edu.cn/ubuntu/ bionic-proposed main restricted universe multiverse
+        
+        ##阿里云的源
+        deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+        deb http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+        deb http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+        deb http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+        deb http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+        deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
+        deb-src http://mirrors.aliyun.com/ubuntu/ bionic-security main restricted universe multiverse
+        deb-src http://mirrors.aliyun.com/ubuntu/ bionic-updates main restricted universe multiverse
+        deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted universe multiverse
+        deb-src http://mirrors.aliyun.com/ubuntu/ bionic-backports main restricted universe multiverse
+                
+        ##163源
+        deb http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+        deb http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ bionic main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ bionic-security main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ bionic-updates main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ bionic-proposed main restricted universe multiverse
+        deb-src http://mirrors.163.com/ubuntu/ bionic-backports main restricted universe multiverse
+
 更新系统源： 
 
        apt update
@@ -140,15 +144,15 @@ $ apt-get install git
  $ git clone https://github.com/adafruit/Adafruit-Motor-HAT-Python-Library.git
  $ python setup.py build
  $ python setup.py install
- $ apt install python-opencv Pillow traitlets
- $ sudo apt-get install  ipywidgets libjpeg8-dev libpng12-dev  libfreetype6-dev zlib1g-dev libwebp-dev  libtiff5-dev libopenjpeg-dev  libzip-dev 
+ $ sudo apt install python-opencv libjpeg8-dev libpng12-dev libfreetype6-dev zlib1g-dev libwebp-dev libtiff5-dev  libopenjpeg-dev libzip-dev
+ $ pip install Pillow ipywidgets traitlets
   
 下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
 
  $ tar -xvf ascbot-0.3.0-py2.7.egg.tar
  $ easy_install ascbot-0.3.0-py2.7.egg                  
 ```
-### 4.2   设置小车使用的I2C总线
+## 4.3   设置小车使用的I2C总线
 Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设置。
 
       $ cd /usr/local/lib/python2.7/dist-packages/ascbot
@@ -156,15 +160,14 @@ Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设�
 
    找到行： i2c_bus = traitlets.Integer(default_value=1).tag(config=True)
    修改为： i2c_bus = traitlets.Integer(default_value=2).tag(config=True)
-
+ ~~~
      $ vim __init__.py
  ~~~
  找到行： from .object_detection import ObjectDetector 
  注释掉： #from .object_detection import ObjectDetector                
+ 注意：若没发现此行，可忽略。
 
-        注意：若没发现此行，可忽略。
-
-## 5 手机APP开发环境搭建
+## 5  手机APP开发环境搭建
 
 具体请参考[Google Android应用开发指南](https://developer.android.google.cn)
 
