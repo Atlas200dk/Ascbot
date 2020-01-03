@@ -98,12 +98,14 @@ make
 
 # 3 算法训练和模型选择
 
+登录算法服务器，在用户目录～/下建立code目录，从码云工程中下载 Algorithm-Lane_Detection算法文件放到code目录。
+
 ## 3.1 数据集划分
 
 将数据集划分为训练集和验证集，将图片放置于各自独立的文件夹，并分别生成文件列表。
 
 ```
-cd code/road_following
+cd code/Algorithm-Lane_Detection/algorithm
 python 1_generate_list.py
 ```
 
@@ -112,7 +114,7 @@ python 1_generate_list.py
 数据增强是将训练数据做一些颜色、亮度、几何形状等方面的微调，目的是增加模型的泛化能力。
 
 ```
-cd code/tool/data_augmentation
+cd code/Algorithm-Lane_Detection/data_augmentation
 python da_road_following.py
 ```
 
@@ -123,7 +125,7 @@ python da_road_following.py
 Caffe 中使用 LMDB 作为默认的二进制文件格式，但 LMDB 格式只支持单标签的标注。而在我们的任务中，类别标签有两个数字，分别为预测点的 x、y 坐标。所以需要用到 HDF5，一种支持多标签的二进制文件格式，来存储图片和对应的坐标。
 
 ```
-cd code/road_following
+cd code/Algorithm-Lane_Detection/algorithm
 python 2_convert_hdf5.py
 ```
 
@@ -138,13 +140,17 @@ python 2_convert_hdf5.py
 - 训练步数 Iteration
 - 训练多久保存一次模型快照
 
-`code/road_following/resnet-18/ResNet-18-Caffemodel-on-ImageNet/solver_adam_poly.prototxt` 中已经配置好这些参数，你可以使用这些超参数直接开始训练。当然，你也可以修改后再训练。
+```
+code/Algorithm-Lane_Detection/algorithm/ResNet-18-Caffemodel-on-ImageNet/solver_adam_poly.prototxt
+```
+
+ 中已经配置好这些参数，你可以使用这些超参数直接开始训练。当然，你也可以修改后再训练。
 
 
 ## 3.5 开始训练
 
 ```
-cd code/road_following/ResNet-18-Caffemodel-on-ImageNet
+cd code/Algorithm-Lane_Detection/algorithm/ResNet-18-Caffemodel-on-ImageNet
 sh ./train.sh
 ```
 
@@ -157,8 +163,8 @@ sh ./train.sh
 在已经划分好的验证集上，可以加载模型并执行推理过程，并将预测结果可视化。
 
 ```
-cd code/validation
-python regression_pycaffe.py
+cd code/Algorithm-Lane_Detection/algorithm
+python validation_regression.py
 ```
 
 执行上面这段代码，将会在屏幕上显示验证集中，每张图片的预测点和标记点，并打印出最终的损失函数值。通常情况下，我们选择损失函数值最小的最优模型。
