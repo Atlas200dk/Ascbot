@@ -65,7 +65,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
      killAllProcess.sh                                       100%  235   110.9KB/s   00:00    
      rosAutoInstall.sh                                       100% 4705     1.5MB/s   00:00    
 
-4）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，密码是Mind@123
+4）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，输入密码
 
     ssh HwHiAiUser@192.168.3.9
     HwHiAiUser@192.168.3.9's password: 
@@ -75,7 +75,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
     * Support:        https://ubuntu.com/advantage
     Last login: Tue Aug  6 15:46:51 2019 from 192.168.3.2
 
-5）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，密码是Mind@123
+5）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，输入密码
 
 
     HwHiAiUser@davinci-mini:~$ su -
