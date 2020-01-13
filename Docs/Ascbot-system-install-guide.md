@@ -38,12 +38,6 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
         $ echo $su ROS_PACKAGE_PATH
         /root/home/catkin_ws/src/:/opt/ros/kinetic/share
 
-
-​        
-​       
-
-
-
 # 3. Ascbot程序的下载和安装
 1）首先把无线路由器的锁关掉，以防终端链接不成功wifi
 
@@ -83,6 +77,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
     root@davinci-mini:~# pwd
     /root
 6）拷贝安装文件夹到 /root/home/catkin_ws， 然后执行脚本  AscbotAppRelease/rosAutoInstall.sh，完成安装以及部署。确认输出信息，确认所有组件安装成功。
+
 7）重启Atlas 200 DK.
 
     root@davinci-mini:~# cd home/catkin_ws/
