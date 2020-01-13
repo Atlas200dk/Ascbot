@@ -147,6 +147,7 @@ $ apt-get install git
  $ python setup.py install
  $ sudo apt install python-opencv libjpeg8-dev libpng12-dev libfreetype6-dev zlib1g-dev libwebp-dev libtiff5-dev  libopenjpeg-dev libzip-dev
  $ pip install Pillow ipywidgets traitlets
+
   
 下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
 
@@ -168,7 +169,7 @@ Atlas 200 DK的扩展有3组 I2C总线，选择的I2C-2，输入以下命令设�
  注释掉： #from .object_detection import ObjectDetector                
  注意：若没发现此行，可忽略。
 
-## 5  手机APP开发环境搭建
+# 5  手机APP开发环境搭建
 
 具体请参考[Google Android应用开发指南](https://developer.android.google.cn)
 
