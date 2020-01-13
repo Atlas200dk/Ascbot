@@ -117,7 +117,7 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
 
 
 # 4. 安装手机端控制应用
-​        1）下载手机端控制应用≈，[下载地址](https://thundercomm.s3.ap-northeast-1.amazonaws.com/public/Ascbot/ascbot-remotectrlv1.0.apk)
+​        1）下载手机端控制应用，[下载地址](https://thundercomm.s3.ap-northeast-1.amazonaws.com/public/Ascbot/ascbot-remotectrlv1.0.apk)
 
 ​        2）安装：ascbot-remotectrl.apk 到手机
 ​        
