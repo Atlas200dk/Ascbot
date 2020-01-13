@@ -147,10 +147,10 @@ $ apt-get install git
  $ python setup.py install
  $ sudo apt install python-opencv libjpeg8-dev libpng12-dev libfreetype6-dev zlib1g-dev libwebp-dev libtiff5-dev  libopenjpeg-dev libzip-dev
  $ pip install Pillow ipywidgets traitlets
-
+```
   
 下载ascbot0.3.0-py2.7.egg.tar，并解压，下载地址：  [Ascbot0.3.0-py2.7.egg](https://gitee.com/Atlas200DK/Ascbot/raw/master/Release/ascbot-0.3.0-py2.7.egg.tar) 
-
+```
  $ tar -xvf ascbot-0.3.0-py2.7.egg.tar
  $ easy_install ascbot-0.3.0-py2.7.egg                  
 ```
