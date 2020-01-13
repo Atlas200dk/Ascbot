@@ -21,7 +21,7 @@
 ## 2.1 关键代码示例
 ###   首先导如Robot包
 
-        from jetbot import Robot
+        from ascbot import Robot
 
 ###   创建对象
 
