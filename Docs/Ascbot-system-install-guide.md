@@ -65,25 +65,24 @@ Atlas 200 DK的使用教程参见华为官网教程：[华为官方教程](https
      killAllProcess.sh                                       100%  235   110.9KB/s   00:00    
      rosAutoInstall.sh                                       100% 4705     1.5MB/s   00:00    
 
-4）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，输入密码
+4）HwHiAiUser用户下不能完成程序升级操作，需要ssh远程登录，输入密码
 
     ssh HwHiAiUser@192.168.3.9
     HwHiAiUser@192.168.3.9's password: 
     Welcome to Ubuntu 16.04.3 LTS (GNU/Linux 4.1.46+ aarch64)
-    * Documentation:  https://help.ubuntu.com
-    * Management:     https://landscape.canonical.com
-    * Support:        https://ubuntu.com/advantage
+    * Documentation:  [https://help.ubuntu.com](https://help.ubuntu.com)
+    * Management:     [https://landscape.canonical.com](https://landscape.canonical.com)
+    * Support:        [https://ubuntu.com/advantage](https://ubuntu.com/advantage)
     Last login: Tue Aug  6 15:46:51 2019 from 192.168.3.2
 
-5）HwHiAiUser用户下执行升级操作，终端输入命令 su - ，输入密码
+5）HwHiAiUser用户下不能完成升级操作，需要root用户才能完成升级，所以在终端输入命令 su - ，输入密码
 
 
     HwHiAiUser@davinci-mini:~$ su -
     Password: 
     root@davinci-mini:~# pwd
     /root
-
-6）拷贝安装文件夹到 ~/home/catkin_ws， 然后执行脚本  AscbotAppRelease/rosAutoInstall.sh，完成安装以及部署。确认输出信息，确认所有组件安装成功。
+6）拷贝安装文件夹到 /root/home/catkin_ws， 然后执行脚本  AscbotAppRelease/rosAutoInstall.sh，完成安装以及部署。确认输出信息，确认所有组件安装成功。
 7）重启Atlas 200 DK.
 
     root@davinci-mini:~# cd home/catkin_ws/
