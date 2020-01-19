@@ -1,10 +1,8 @@
 1. 目录
 -- build.sh \
 -- CollisionAvoidance \
--- ObjectFollowing \
 -- README.txt \
 -- RoadFollowing \
--- RoadFollowing-ssd \
 -- RoadObjectFollowing \
 
 2. 编译

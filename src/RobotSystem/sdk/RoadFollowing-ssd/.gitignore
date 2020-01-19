@@ -1,5 +1,0 @@
-*.log
-*.mind
-.clang-format
-/.vscode
-/out
